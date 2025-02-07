@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useSurvey } from '../context/SurveyContext';
 import StepIndicator from './StepIndicator';
+import PersonalInfo from './steps/PersonalInfo';
 
 function SurveyForm() {
   const [currentStep, setCurrentStep] = useState(0);
-  const { state, dispatch } = useSurvey();
+  const { state } = useSurvey();
 
   const steps = [
     'Personal Information',
@@ -13,6 +14,16 @@ function SurveyForm() {
     'Work Preferences',
     'Goals'
   ];
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 0:
+        return <PersonalInfo />;
+      // We'll add other steps later
+      default:
+        return <div>Step {currentStep + 1}</div>;
+    }
+  };
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -38,7 +49,8 @@ function SurveyForm() {
             {steps[currentStep]}
           </h2>
           
-          {/* Navigation buttons */}
+          {renderStep()}
+
           <div className="flex justify-between mt-6">
             <button
               onClick={handlePrevious}
