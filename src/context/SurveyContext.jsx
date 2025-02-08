@@ -63,6 +63,14 @@ function surveyReducer(state, action) {
           }
         }
       };
+    case 'RESET_SURVEY':
+      return {
+        personalInfo: {},
+        personalityTraits: {},
+        skills: {},
+        workPreferences: {},
+        goals: {}
+      };
     default:
       return state;
   }

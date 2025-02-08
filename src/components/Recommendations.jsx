@@ -2,11 +2,18 @@ import React, { useRef, useState } from 'react';
 import { useSurvey } from '../context/SurveyContext';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import { useNavigate } from 'react-router-dom';
 
 function Recommendations() {
-  const { state } = useSurvey();
+  const { state, dispatch } = useSurvey();
   const contentRef = useRef(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNewSurvey = () => {
+    dispatch({ type: 'RESET_SURVEY' });
+    navigate('/');
+  };
 
   const handlePrint = () => {
     window.print();
@@ -17,18 +24,63 @@ function Recommendations() {
     const element = contentRef.current;
 
     try {
+      // Add PDF-specific styles before capturing
+      element.classList.add('pdf-mode');
+      
       const canvas = await html2canvas(element, {
         scale: 2,
         logging: false,
-        useCORS: true
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        windowWidth: 1200, // Fixed width for consistency
+        onclone: (document) => {
+          // Adjust clone document styles for PDF
+          const clone = document.querySelector('.pdf-mode');
+          if (clone) {
+            clone.style.padding = '20px';
+            clone.style.maxWidth = '1000px';
+            clone.style.margin = '0 auto';
+          }
+        }
       });
       
+      // Remove PDF-specific styles after capturing
+      element.classList.remove('pdf-mode');
+      
       const imgData = canvas.toDataURL('image/jpeg', 1.0);
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+      });
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
       
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      // Add company name and date to header
+      pdf.setFontSize(10);
+      pdf.setTextColor(128, 128, 128);
+      pdf.text('Embers Staffing Solutions', 10, 10);
+      pdf.text(new Date().toLocaleDateString(), pdfWidth - 30, 10);
+      
+      // Add the main content
+      pdf.addImage(imgData, 'JPEG', 0, 15, pdfWidth, pdfHeight * 0.9);
+      
+      // Add page numbers
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.setTextColor(128, 128, 128);
+        pdf.text(
+          `Page ${i} of ${pageCount}`,
+          pdfWidth / 2,
+          pdfHeight - 10,
+          { align: 'center' }
+        );
+      }
+      
       pdf.save('career-recommendations.pdf');
     } catch (error) {
       console.error('PDF generation failed:', error);
@@ -154,61 +206,9 @@ function Recommendations() {
     <div className="min-h-screen bg-gray-100 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Action Buttons */}
-        <div className="flex justify-end gap-4 mb-6 print:hidden">
+        <div className="flex justify-between mb-6 print:hidden">
           <button
-            onClick={handleDownloadPDF}
-            disabled={isGeneratingPDF}
-            className={`px-4 py-2 rounded-lg flex items-center ${
-              isGeneratingPDF 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-green-500 hover:bg-green-600'
-            } text-white`}
-          >
-            {isGeneratingPDF ? (
-              <>
-                <svg 
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  fill="none" 
-                  viewBox="0 0 24 24"
-                >
-                  <circle 
-                    className="opacity-25" 
-                    cx="12" 
-                    cy="12" 
-                    r="10" 
-                    stroke="currentColor" 
-                    strokeWidth="4"
-                  />
-                  <path 
-                    className="opacity-75" 
-                    fill="currentColor" 
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Generating PDF...
-              </>
-            ) : (
-              <>
-                <svg 
-                  className="w-5 h-5 mr-2" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
-                  />
-                </svg>
-                Download PDF
-              </>
-            )}
-          </button>
-          <button
-            onClick={handlePrint}
+            onClick={handleNewSurvey}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center"
           >
             <svg 
@@ -221,11 +221,85 @@ function Recommendations() {
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
                 strokeWidth={2} 
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" 
+                d="M12 4v16m8-8H4" 
               />
             </svg>
-            Print
+            Submit New Survey
           </button>
+
+          <div className="flex gap-4">
+            <button
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+              className={`px-4 py-2 rounded-lg flex items-center ${
+                isGeneratingPDF 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-green-500 hover:bg-green-600'
+              } text-white`}
+            >
+              {isGeneratingPDF ? (
+                <>
+                  <svg 
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24"
+                  >
+                    <circle 
+                      className="opacity-25" 
+                      cx="12" 
+                      cy="12" 
+                      r="10" 
+                      stroke="currentColor" 
+                      strokeWidth="4"
+                    />
+                    <path 
+                      className="opacity-75" 
+                      fill="currentColor" 
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Generating PDF...
+                </>
+              ) : (
+                <>
+                  <svg 
+                    className="w-5 h-5 mr-2" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+                    />
+                  </svg>
+                  Download PDF
+                </>
+              )}
+            </button>
+            <button
+              onClick={handlePrint}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center"
+            >
+              <svg 
+                className="w-5 h-5 mr-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" 
+                />
+              </svg>
+              Print
+            </button>
+          </div>
         </div>
 
         {/* Content to be printed/downloaded */}
