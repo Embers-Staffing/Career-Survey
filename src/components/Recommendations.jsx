@@ -4,6 +4,7 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useNavigate } from 'react-router-dom';
 import EducationResources from './EducationResources';
+import JobBoards from './JobBoards';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -455,7 +456,10 @@ function Recommendations() {
             </div>
           </div>
 
-          {/* Add Education Resources section */}
+          {/* Add Job Boards before Education Resources */}
+          <JobBoards />
+
+          {/* Education Resources */}
           <EducationResources />
 
           {/* Footer */}
