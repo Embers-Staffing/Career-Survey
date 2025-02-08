@@ -47,17 +47,17 @@ export const SURVEY_OPTIONS = {
     'Project Management'
   ],
   certifications: [
-    'OHSR (Occupational Health and Safety Representative)',
     'WHMIS (Workplace Hazardous Materials Information System)',
     'First Aid/CPR',
     'Fall Protection',
-    'Confined Space Entry',
     'Working at Heights',
-    'Equipment Operation',
+    'Confined Space Entry',
     'Construction Safety Training System (CSTS)',
     'Traffic Control Person (TCP)',
+    'Equipment Operation',
     'Project Management Professional (PMP)',
     'Gold Seal Certification',
+    'Red Seal Trade Certification',
     'Other'
   ],
   // ... Add other option sets

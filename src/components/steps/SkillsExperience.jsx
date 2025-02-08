@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSurvey } from '../../context/SurveyContext';
+import { SURVEY_OPTIONS } from '../../constants/surveyOptions';
 
 function SkillsExperience() {
   const { state, dispatch } = useSurvey();
@@ -18,12 +19,17 @@ function SkillsExperience() {
     });
   };
 
-  const handleCertificationChange = (value) => {
+  const handleCertificationChange = (cert) => {
+    const currentCerts = state.skills?.certifications || [];
+    const updatedCerts = currentCerts.includes(cert)
+      ? currentCerts.filter(c => c !== cert)
+      : [...currentCerts, cert];
+
     dispatch({
       type: 'UPDATE_FIELD',
       section: 'skills',
       field: 'certifications',
-      value
+      value: updatedCerts
     });
   };
 
@@ -215,17 +221,19 @@ function SkillsExperience() {
       <div>
         <h3 className="text-lg font-semibold mb-4">Certifications</h3>
         <p className="text-gray-600 mb-4">Do you have any construction-related certifications?</p>
-        
-        <select
-          value={state.skills.certifications}
-          onChange={(e) => handleCertificationChange(e.target.value)}
-          className="w-full p-2 border rounded-md"
-        >
-          <option value="">Choose...</option>
-          {certificationOptions.map(cert => (
-            <option key={cert} value={cert}>{cert}</option>
+        <div className="space-y-2">
+          {SURVEY_OPTIONS.certifications.map((cert) => (
+            <label key={cert} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={state.skills?.certifications?.includes(cert) || false}
+                onChange={() => handleCertificationChange(cert)}
+                className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              />
+              <span className="ml-2">{cert}</span>
+            </label>
           ))}
-        </select>
+        </div>
       </div>
     </div>
   );
