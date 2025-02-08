@@ -5,42 +5,36 @@ const JOB_BOARDS = {
     {
       name: "BuildForce Canada Job Bank",
       url: "https://www.buildforce.ca/en/jobs",
-      description: "Construction-specific jobs across Canada",
-      icon: "🏗️"
+      description: "Construction-specific jobs across Canada"
     },
     {
       name: "EllisDon Careers",
       url: "https://www.ellisdon.com/careers/",
-      description: "One of Canada's largest construction companies",
-      icon: "🏢"
+      description: "One of Canada's largest construction companies"
     },
     {
       name: "PCL Careers",
       url: "https://careers.pcl.com/",
-      description: "Major construction and contracting company",
-      icon: "🏗️"
+      description: "Major construction and contracting company"
     }
   ],
   specialized: [
     {
       name: "Canadian Construction Women",
       url: "https://www.cawic.ca/jobs/",
-      description: "Jobs and opportunities for women in construction",
-      icon: "👷‍♀️"
+      description: "Jobs and opportunities for women in construction"
     },
     {
       name: "Skilled Trades BC",
       url: "https://skilledtradesbc.ca/jobs",
-      description: "Trades-specific positions in British Columbia",
-      icon: "🔧"
+      description: "Trades-specific positions in British Columbia"
     }
   ],
   government: [
     {
       name: "Government of Canada Job Bank",
       url: "https://www.jobbank.gc.ca/construction",
-      description: "Federal government construction job listings",
-      icon: "🍁"
+      description: "Federal government construction job listings"
     }
   ]
 };
@@ -86,7 +80,7 @@ function JobBoards() {
 
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
         <p className="text-sm text-gray-600">
-          💡 <span className="font-medium">Pro Tip:</span> Set up job alerts on these platforms to get notified about new opportunities that match your skills and preferences.
+          <span className="font-medium">Pro Tip:</span> Set up job alerts on these platforms to get notified about new opportunities that match your skills and preferences.
         </p>
       </div>
     </div>

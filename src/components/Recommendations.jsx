@@ -138,22 +138,46 @@ function Recommendations() {
     const { myersBriggs } = state.personalityTraits || {};
     if (!myersBriggs) return null;
 
-    const type = Object.values(myersBriggs).join('');
-    const recommendations = {
-      'ESTJ': {
-        roles: ['Project Manager', 'Site Supervisor', 'Safety Coordinator'],
-        strengths: ['Leadership', 'Organization', 'Detail-oriented'],
-        certifications: ['PMP', 'Gold Seal Certification', 'OHSR']
-      },
-      'ISTP': {
-        roles: ['Skilled Tradesperson', 'Equipment Operator', 'Technical Specialist'],
-        strengths: ['Problem-solving', 'Technical aptitude', 'Practical skills'],
-        certifications: ['Trade Certification', 'Equipment Operation', 'Technical Certifications']
-      },
-      // Add more personality type recommendations
+    // Combine MBTI preferences
+    const type = {
+      attention: myersBriggs.attention[0] || '',
+      information: myersBriggs.information[0] || '',
+      decisions: myersBriggs.decisions[0] || '',
+      lifestyle: myersBriggs.lifestyle[0] || ''
     };
 
-    return recommendations[type] || null;
+    // Get full type string
+    const typeString = `${type.attention}${type.information}${type.decisions}${type.lifestyle}`;
+
+    const recommendations = {
+      'ESTJ': {
+        roles: ['Project Manager', 'Site Supervisor', 'Construction Manager'],
+        strengths: ['Organization', 'Leadership', 'Practical decision-making'],
+        workStyle: 'You excel in structured environments and are natural at managing teams and projects.'
+      },
+      'ISTJ': {
+        roles: ['Quality Control Manager', 'Safety Inspector', 'Technical Specialist'],
+        strengths: ['Attention to detail', 'Reliability', 'Systematic approach'],
+        workStyle: 'You thrive in roles requiring precision and methodical work processes.'
+      },
+      'ENFJ': {
+        roles: ['Training Coordinator', 'HR Manager', 'Team Leader'],
+        strengths: ['People management', 'Communication', 'Team building'],
+        workStyle: 'You excel at developing others and creating positive work environments.'
+      },
+      'ISTP': {
+        roles: ['Skilled Tradesperson', 'Equipment Operator', 'Technical Lead'],
+        strengths: ['Problem-solving', 'Technical aptitude', 'Adaptability'],
+        workStyle: 'You excel in hands-on roles requiring technical expertise and quick thinking.'
+      }
+      // Add more personality types as needed
+    };
+
+    return recommendations[typeString] || {
+      roles: ['Various construction roles'],
+      strengths: ['Adaptability', 'Learning capacity', 'Professional growth'],
+      workStyle: 'Your unique combination of traits can be valuable across different construction roles.'
+    };
   };
 
   // Calculate salary ranges based on experience and skills
@@ -384,14 +408,30 @@ function Recommendations() {
             <h3 className="text-xl font-semibold text-gray-900">Personality Analysis</h3>
             <div className="mt-4">
               {analyzePersonalityType() && (
-                <>
-                  <h4 className="font-medium">Recommended Roles:</h4>
-                  <ul className="mt-2 list-disc list-inside">
-                    {analyzePersonalityType().roles.map((role, index) => (
-                      <li key={index} className="text-gray-600">{role}</li>
-                    ))}
-                  </ul>
-                </>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium">Recommended Roles:</h4>
+                    <ul className="mt-2 list-disc list-inside">
+                      {analyzePersonalityType().roles.map((role, index) => (
+                        <li key={index} className="text-gray-600">{role}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium">Key Strengths:</h4>
+                    <ul className="mt-2 list-disc list-inside">
+                      {analyzePersonalityType().strengths.map((strength, index) => (
+                        <li key={index} className="text-gray-600">{strength}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium">Work Style:</h4>
+                    <p className="mt-2 text-gray-600">{analyzePersonalityType().workStyle}</p>
+                  </div>
+                </div>
               )}
             </div>
           </div>
