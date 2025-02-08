@@ -4,8 +4,6 @@ import { useSurvey } from '../../context/SurveyContext';
 function PersonalityAssessment() {
   const { state, dispatch } = useSurvey();
   
-  console.log('PersonalityTraits State:', state.personalityTraits);
-
   const handleMyersBriggsChange = (category, value) => {
     // Get current values for this category
     const currentValues = state.personalityTraits.myersBriggs[category];
@@ -128,8 +126,6 @@ function PersonalityAssessment() {
 
   return (
     <div className="space-y-8">
-      <div className="text-red-500">Test: PersonalityAssessment Component</div>
-      
       {/* Myers-Briggs Section */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Myers-Briggs Assessment</h3>
