@@ -3,6 +3,7 @@ import { useSurvey } from '../context/SurveyContext';
 import StepIndicator from './StepIndicator';
 import PersonalInfo from './steps/PersonalInfo';
 import PersonalityAssessment from './steps/PersonalityAssessment';
+import SkillsExperience from './steps/SkillsExperience';
 
 function SurveyForm() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -23,13 +24,9 @@ function SurveyForm() {
       case 0:
         return <PersonalInfo />;
       case 1:
-        return (
-          <div>
-            <div className="text-red-500">Debug: Step 1 Selected</div>
-            <PersonalityAssessment />
-          </div>
-        );
-      // We'll add other steps later
+        return <PersonalityAssessment />;
+      case 2:
+        return <SkillsExperience />;
       default:
         return <div>Step {currentStep + 1}</div>;
     }
