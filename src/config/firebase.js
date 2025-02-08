@@ -1,5 +1,16 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, enableIndexedDbPersistence, collection, getDocs, query, limit, doc, getDoc } from 'firebase/firestore';
+import { 
+  getFirestore, 
+  collection, 
+  getDocs, 
+  query, 
+  limit, 
+  doc, 
+  getDoc,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentSingleTabManager
+} from 'firebase/firestore';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
 
 // Debug environment variables
@@ -48,20 +59,15 @@ try {
   throw error;
 }
 
-// Initialize Firestore
+// Initialize Firestore with new persistence settings
 let db;
 try {
-  db = getFirestore(app);
-  console.log('Firestore initialized successfully');
-  
-  // Enable offline persistence
-  enableIndexedDbPersistence(db)
-    .then(() => {
-      console.log('Firestore persistence enabled');
+  db = initializeFirestore(app, {
+    cache: persistentLocalCache({
+      tabManager: persistentSingleTabManager()
     })
-    .catch((err) => {
-      console.error('Firestore persistence error:', err);
-    });
+  });
+  console.log('Firestore initialized successfully');
 } catch (error) {
   console.error('Firestore initialization error:', error);
   throw error;
@@ -77,17 +83,23 @@ auth.onAuthStateChanged((user) => {
     console.log('User email:', user.email);
     console.log('User ID:', user.uid);
     
-    // Test Firestore access with specific document
-    const testDocRef = doc(db, 'responses', 'Hs0jUS0glqNbLTR5Wbvv');
-    getDoc(testDocRef)
-      .then((docSnap) => {
-        if (docSnap.exists()) {
-          console.log('Test document exists:', docSnap.data());
-        } else {
-          console.log('Test document does not exist');
-        }
-      })
-      .catch(error => console.error('Firestore read test failed:', error));
+    // Test Firestore access
+    try {
+      const responsesRef = collection(db, 'responses');
+      const q = query(responsesRef, limit(1));
+      getDocs(q)
+        .then((querySnapshot) => {
+          console.log('Firestore read successful, found', querySnapshot.size, 'documents');
+          querySnapshot.forEach((doc) => {
+            console.log('Document data:', doc.data());
+          });
+        })
+        .catch((error) => {
+          console.error('Firestore read error:', error);
+        });
+    } catch (error) {
+      console.error('Firestore query setup error:', error);
+    }
   }
 });
 
