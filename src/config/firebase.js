@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getFirestore, enableIndexedDbPersistence, collection, getDocs, query, limit, doc, getDoc } from 'firebase/firestore';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
 
 // Debug environment variables
@@ -76,9 +76,17 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     console.log('User email:', user.email);
     console.log('User ID:', user.uid);
-    // Test Firestore access
-    db.collection('responses').limit(1).get()
-      .then(() => console.log('Firestore read test successful'))
+    
+    // Test Firestore access with specific document
+    const testDocRef = doc(db, 'responses', 'Hs0jUS0glqNbLTR5Wbvv');
+    getDoc(testDocRef)
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          console.log('Test document exists:', docSnap.data());
+        } else {
+          console.log('Test document does not exist');
+        }
+      })
       .catch(error => console.error('Firestore read test failed:', error));
   }
 });
