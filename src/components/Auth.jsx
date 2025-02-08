@@ -18,8 +18,26 @@ function Auth({ children }) {
     return () => unsubscribe();
   }, []);
 
+  const validateForm = () => {
+    if (!email || !password) {
+      setError('Email and password are required');
+      return false;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError('Please enter a valid email address');
+      return false;
+    }
+    return true;
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    
     setError('');
     setLoading(true);
     
@@ -28,17 +46,20 @@ function Auth({ children }) {
     } catch (error) {
       console.error('Auth error:', error);
       switch (error.code) {
-        case 'auth/network-request-failed':
-          setError('Network error. Please check your internet connection.');
+        case 'auth/invalid-credential':
+          setError('Invalid email or password');
           break;
-        case 'auth/invalid-email':
-          setError('Invalid email address.');
+        case 'auth/user-not-found':
+          setError('No account found with this email');
           break;
         case 'auth/wrong-password':
-          setError('Incorrect password.');
+          setError('Incorrect password');
+          break;
+        case 'auth/too-many-requests':
+          setError('Too many attempts. Please try again later');
           break;
         default:
-          setError(error.message);
+          setError('Login failed. Please try again');
       }
     } finally {
       setLoading(false);
@@ -47,6 +68,8 @@ function Auth({ children }) {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    
     setError('');
     setLoading(true);
     
@@ -55,17 +78,20 @@ function Auth({ children }) {
     } catch (error) {
       console.error('Auth error:', error);
       switch (error.code) {
-        case 'auth/network-request-failed':
-          setError('Network error. Please check your internet connection.');
-          break;
         case 'auth/email-already-in-use':
-          setError('Email already registered.');
+          setError('An account already exists with this email');
+          break;
+        case 'auth/invalid-email':
+          setError('Please enter a valid email address');
           break;
         case 'auth/weak-password':
-          setError('Password should be at least 6 characters.');
+          setError('Password should be at least 6 characters');
+          break;
+        case 'auth/operation-not-allowed':
+          setError('Email/password accounts are not enabled. Please contact support');
           break;
         default:
-          setError(error.message);
+          setError('Sign up failed. Please try again');
       }
     } finally {
       setLoading(false);
