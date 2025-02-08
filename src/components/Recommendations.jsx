@@ -3,6 +3,7 @@ import { useSurvey } from '../context/SurveyContext';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useNavigate } from 'react-router-dom';
+import EducationResources from './EducationResources';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -454,7 +455,10 @@ function Recommendations() {
             </div>
           </div>
 
-          {/* Add Footer */}
+          {/* Add Education Resources section */}
+          <EducationResources />
+
+          {/* Footer */}
           <footer className="mt-12 text-center text-gray-600">
             <div className="border-t pt-6">
               <p className="mb-2">© Embers Staffing 2025</p>
