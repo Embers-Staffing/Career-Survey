@@ -7,7 +7,8 @@ const initIdentity = () => {
       netlifyIdentity.init({
         logo: false,
         cookieSecure: true,
-        secureCookie: true
+        secureCookie: true,
+        sameSite: 'Lax'
       });
       resolve();
     } else {
@@ -15,7 +16,8 @@ const initIdentity = () => {
         netlifyIdentity.init({
           logo: false,
           cookieSecure: true,
-          secureCookie: true
+          secureCookie: true,
+          sameSite: 'Lax'
         });
         resolve();
       });
@@ -23,6 +25,7 @@ const initIdentity = () => {
   });
 };
 
-initIdentity();
+// Initialize immediately
+initIdentity().catch(console.error);
 
 export default netlifyIdentity; 
