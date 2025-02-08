@@ -11,8 +11,50 @@ function Recommendations() {
   const navigate = useNavigate();
 
   const handleNewSurvey = () => {
-    dispatch({ type: 'RESET_SURVEY' });
-    navigate('/');
+    dispatch({ 
+      type: 'RESET_SURVEY',
+      payload: {
+        personalInfo: {
+          firstName: '',
+          lastName: '',
+          birthYear: '',
+          birthMonth: '',
+          yearsInConstruction: ''
+        },
+        personalityTraits: {
+          myersBriggs: {
+            attention: [],
+            information: [],
+            decisions: [],
+            lifestyle: []
+          },
+          hollandCode: []
+        },
+        skills: {
+          technical: [],
+          certifications: [],
+          experience: {
+            role: '',
+            types: [],
+            projectSize: ''
+          }
+        },
+        workPreferences: {
+          roles: [],
+          technologies: [],
+          environment: '',
+          travelWillingness: ''
+        },
+        goals: {
+          careerGoals: [],
+          advancementPreference: '',
+          mentorshipType: '',
+          targetSalary: ''
+        }
+      }
+    });
+
+    window.location.href = '/';
   };
 
   const handlePrint = () => {
@@ -207,25 +249,49 @@ function Recommendations() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Action Buttons */}
         <div className="flex justify-between mb-6 print:hidden">
-          <button
-            onClick={handleNewSurvey}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center"
-          >
-            <svg 
-              className="w-5 h-5 mr-2" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
+          <div className="flex gap-4">
+            <button
+              onClick={handleNewSurvey}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M12 4v16m8-8H4" 
-              />
-            </svg>
-            Submit New Survey
-          </button>
+              <svg 
+                className="w-5 h-5 mr-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M12 4v16m8-8H4" 
+                />
+              </svg>
+              Submit New Survey
+            </button>
+
+            <a
+              href="https://survey-analytics-onvx.streamlit.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 flex items-center"
+            >
+              <svg 
+                className="w-5 h-5 mr-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" 
+                />
+              </svg>
+              View Analytics Dashboard
+            </a>
+          </div>
 
           <div className="flex gap-4">
             <button
