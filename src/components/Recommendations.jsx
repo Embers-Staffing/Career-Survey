@@ -5,6 +5,7 @@ import html2canvas from 'html2canvas';
 import { useNavigate } from 'react-router-dom';
 import EducationResources from './EducationResources';
 import JobBoards from './JobBoards';
+import ProfessionalAssociations from './ProfessionalAssociations';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -496,7 +497,10 @@ function Recommendations() {
             </div>
           </div>
 
-          {/* Add Job Boards before Education Resources */}
+          {/* Add Professional Associations before Job Boards */}
+          <ProfessionalAssociations />
+
+          {/* Job Boards */}
           <JobBoards />
 
           {/* Education Resources */}
