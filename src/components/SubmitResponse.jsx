@@ -2,27 +2,47 @@ import React, { useState } from 'react';
 import { useSurvey } from '../context/SurveyContext';
 import { db, auth } from '../config/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import Recommendations from './Recommendations';
 
 function SubmitResponse({ onReset }) {
   const { state } = useSurvey();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+
+  // Only store essential survey data, not recommendations
+  const getSubmissionData = () => {
+    const {
+      personalInfo,
+      personalityTraits,
+      skills,
+      workPreferences,
+      goals
+    } = state;
+
+    return {
+      userId: auth.currentUser.uid,
+      userEmail: auth.currentUser.email,
+      submittedAt: new Date().toISOString(),
+      personalInfo,
+      personalityTraits,
+      skills,
+      workPreferences,
+      goals
+    };
+  };
 
   const handleSubmit = async () => {
     setSubmitting(true);
     setError('');
 
     try {
-      const response = {
-        ...state,
-        userId: auth.currentUser.uid,
-        userEmail: auth.currentUser.email,
-        submittedAt: new Date().toISOString()
-      };
-
-      await addDoc(collection(db, 'responses'), response);
-      setSubmitted(true);
+      // Store only the survey responses, not the recommendations
+      const submissionData = getSubmissionData();
+      await addDoc(collection(db, 'responses'), submissionData);
+      
+      // Show recommendations after successful submission
+      setShowRecommendations(true);
     } catch (error) {
       console.error('Submission error:', error);
       setError('Failed to submit response. Please try again.');
@@ -31,24 +51,8 @@ function SubmitResponse({ onReset }) {
     }
   };
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-md w-96 text-center">
-          <div className="text-green-500 text-5xl mb-4">✓</div>
-          <h2 className="text-2xl font-bold mb-4">Thank You!</h2>
-          <p className="text-gray-600 mb-6">
-            Your response has been successfully submitted.
-          </p>
-          <button
-            onClick={onReset}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Start New Survey
-          </button>
-        </div>
-      </div>
-    );
+  if (showRecommendations) {
+    return <Recommendations />;
   }
 
   return (
