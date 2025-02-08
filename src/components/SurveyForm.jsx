@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSurvey } from '../context/SurveyContext';
 import StepIndicator from './StepIndicator';
 import PersonalInfo from './steps/PersonalInfo';
+import PersonalityAssessment from './steps/PersonalityAssessment';
 
 function SurveyForm() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -19,6 +20,8 @@ function SurveyForm() {
     switch (currentStep) {
       case 0:
         return <PersonalInfo />;
+      case 1:
+        return <PersonalityAssessment />;
       // We'll add other steps later
       default:
         return <div>Step {currentStep + 1}</div>;

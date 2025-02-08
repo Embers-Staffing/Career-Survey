@@ -3,6 +3,8 @@ import { useSurvey } from '../../context/SurveyContext';
 
 function PersonalityAssessment() {
   const { state, dispatch } = useSurvey();
+  
+  console.log('PersonalityTraits State:', state.personalityTraits);
 
   const handleMyersBriggsChange = (category, value) => {
     // Get current values for this category
