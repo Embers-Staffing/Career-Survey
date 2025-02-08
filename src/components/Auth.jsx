@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 function Auth({ children }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const auth = getAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
