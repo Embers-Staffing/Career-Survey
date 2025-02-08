@@ -13,7 +13,6 @@ console.log('Environment Variables Check:', {
 });
 
 const firebaseConfig = {
-  // Your Firebase config object
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
@@ -29,7 +28,8 @@ console.log('Firebase Config Check:', {
   hasProjectId: !!firebaseConfig.projectId,
   hasStorageBucket: !!firebaseConfig.storageBucket,
   hasMessagingSenderId: !!firebaseConfig.messagingSenderId,
-  hasAppId: !!firebaseConfig.appId
+  hasAppId: !!firebaseConfig.appId,
+  authDomainEndsWithFirebaseapp: firebaseConfig.authDomain?.endsWith('firebaseapp.com') || false
 });
 
 // Validate config
@@ -54,4 +54,13 @@ export const auth = getAuth(app);
 // Log auth state for debugging
 auth.onAuthStateChanged((user) => {
   console.log('Auth state changed:', user ? 'User logged in' : 'No user');
-}); 
+  if (user) {
+    console.log('User email:', user.email);
+    console.log('User ID:', user.uid);
+  }
+});
+
+// Test auth configuration
+auth.useDeviceLanguage();
+console.log('Auth domain:', auth.config.authDomain);
+console.log('API key valid:', !!auth.config.apiKey); 
