@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
 
 // Debug environment variables
@@ -29,7 +29,8 @@ console.log('Firebase Config Check:', {
   hasStorageBucket: !!firebaseConfig.storageBucket,
   hasMessagingSenderId: !!firebaseConfig.messagingSenderId,
   hasAppId: !!firebaseConfig.appId,
-  authDomainEndsWithFirebaseapp: firebaseConfig.authDomain?.endsWith('firebaseapp.com') || false
+  authDomainEndsWithFirebaseapp: firebaseConfig.authDomain?.endsWith('firebaseapp.com') || false,
+  projectIdMatches: firebaseConfig.projectId === 'career-survey-ec41a'
 });
 
 // Validate config
@@ -47,9 +48,27 @@ try {
   throw error;
 }
 
-// Initialize services
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+// Initialize Firestore
+let db;
+try {
+  db = getFirestore(app);
+  console.log('Firestore initialized successfully');
+  
+  // Enable offline persistence
+  enableIndexedDbPersistence(db)
+    .then(() => {
+      console.log('Firestore persistence enabled');
+    })
+    .catch((err) => {
+      console.error('Firestore persistence error:', err);
+    });
+} catch (error) {
+  console.error('Firestore initialization error:', error);
+  throw error;
+}
+
+// Initialize Auth
+const auth = getAuth(app);
 
 // Log auth state for debugging
 auth.onAuthStateChanged((user) => {
@@ -57,8 +76,14 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     console.log('User email:', user.email);
     console.log('User ID:', user.uid);
+    // Test Firestore access
+    db.collection('responses').limit(1).get()
+      .then(() => console.log('Firestore read test successful'))
+      .catch(error => console.error('Firestore read test failed:', error));
   }
 });
+
+export { db, auth };
 
 // Test auth configuration
 auth.useDeviceLanguage();
