@@ -17,11 +17,18 @@ function SurveyForm() {
   ];
 
   const renderStep = () => {
+    console.log('Current Step:', currentStep);
+    
     switch (currentStep) {
       case 0:
         return <PersonalInfo />;
       case 1:
-        return <PersonalityAssessment />;
+        return (
+          <div>
+            <div className="text-red-500">Debug: Step 1 Selected</div>
+            <PersonalityAssessment />
+          </div>
+        );
       // We'll add other steps later
       default:
         return <div>Step {currentStep + 1}</div>;

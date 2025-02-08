@@ -128,6 +128,8 @@ function PersonalityAssessment() {
 
   return (
     <div className="space-y-8">
+      <div className="text-red-500">Test: PersonalityAssessment Component</div>
+      
       {/* Myers-Briggs Section */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Myers-Briggs Assessment</h3>
