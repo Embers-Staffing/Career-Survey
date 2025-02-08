@@ -2,7 +2,10 @@ import netlifyIdentity from 'netlify-identity-widget';
 
 // Configure the widget
 netlifyIdentity.init({
-  logo: false // Optional - disable the Netlify logo
+  logo: false,
+  cookieSecure: true,
+  secureCookie: true,
+  sameSiteCookie: 'Strict'
 });
 
 export default netlifyIdentity; 
