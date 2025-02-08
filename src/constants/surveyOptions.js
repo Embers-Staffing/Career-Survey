@@ -48,11 +48,16 @@ export const SURVEY_OPTIONS = {
   ],
   certifications: [
     'OHSR (Occupational Health and Safety Representative)',
-    'First Aid',
+    'WHMIS (Workplace Hazardous Materials Information System)',
+    'First Aid/CPR',
     'Fall Protection',
     'Confined Space Entry',
+    'Working at Heights',
     'Equipment Operation',
+    'Construction Safety Training System (CSTS)',
+    'Traffic Control Person (TCP)',
     'Project Management Professional (PMP)',
+    'Gold Seal Certification',
     'Other'
   ],
   // ... Add other option sets
