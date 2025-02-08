@@ -6,9 +6,11 @@ import PersonalityAssessment from './steps/PersonalityAssessment';
 import SkillsExperience from './steps/SkillsExperience';
 import WorkPreferences from './steps/WorkPreferences';
 import Goals from './steps/Goals';
+import SubmitResponse from './SubmitResponse';
 
 function SurveyForm() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [showSubmit, setShowSubmit] = useState(false);
   const { state } = useSurvey();
 
   const steps = [
@@ -39,6 +41,8 @@ function SurveyForm() {
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+    } else {
+      setShowSubmit(true);
     }
   };
 
@@ -47,6 +51,16 @@ function SurveyForm() {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  const handleReset = () => {
+    setCurrentStep(0);
+    setShowSubmit(false);
+    // You might want to reset the form state here as well
+  };
+
+  if (showSubmit) {
+    return <SubmitResponse onReset={handleReset} />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
