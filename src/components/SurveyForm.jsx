@@ -4,6 +4,8 @@ import StepIndicator from './StepIndicator';
 import PersonalInfo from './steps/PersonalInfo';
 import PersonalityAssessment from './steps/PersonalityAssessment';
 import SkillsExperience from './steps/SkillsExperience';
+import WorkPreferences from './steps/WorkPreferences';
+import Goals from './steps/Goals';
 
 function SurveyForm() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -27,6 +29,10 @@ function SurveyForm() {
         return <PersonalityAssessment />;
       case 2:
         return <SkillsExperience />;
+      case 3:
+        return <WorkPreferences />;
+      case 4:
+        return <Goals />;
       default:
         return <div>Step {currentStep + 1}</div>;
     }
