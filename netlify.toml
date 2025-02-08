@@ -38,6 +38,7 @@
     Set-Cookie = """
       HttpOnly;
       Secure;
-      SameSite=Lax;
-      Path=/
+      SameSite=Strict;
+      Path=/;
+      Domain=career-survey.netlify.app
     """ 
