@@ -163,6 +163,24 @@ function Recommendations() {
             </p>
           </div>
         </div>
+
+        {/* Add Footer */}
+        <footer className="mt-12 text-center text-gray-600">
+          <div className="border-t pt-6">
+            <p className="mb-2">© Embers Staffing 2025</p>
+            <p className="text-sm">
+              Made with ❤️ by{' '}
+              <a 
+                href="https://github.com/ArsCodeAmatoria" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800"
+              >
+                ArsCodeAmatoria
+              </a>
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );

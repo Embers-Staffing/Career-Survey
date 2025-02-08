@@ -64,9 +64,15 @@ function SurveyForm() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">
-        Construction Career Survey
-      </h1>
+      <div className="text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+          Construction Career Survey
+        </h1>
+        <p className="text-xl md:text-2xl text-gray-600 font-light">
+          Discover Your Path in Construction and Property Development
+        </p>
+      </div>
+
       <div className="max-w-2xl mx-auto">
         <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
         <div className="bg-white rounded-lg shadow p-6">
@@ -97,6 +103,23 @@ function SurveyForm() {
           </div>
         </div>
       </div>
+
+      <footer className="mt-12 text-center text-gray-600">
+        <div className="border-t pt-6">
+          <p className="mb-2">© Embers Staffing 2025</p>
+          <p className="text-sm">
+            Made with ❤️ by{' '}
+            <a 
+              href="https://github.com/ArsCodeAmatoria" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800"
+            >
+              ArsCodeAmatoria
+            </a>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
