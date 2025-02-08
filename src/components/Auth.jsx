@@ -3,18 +3,35 @@ import netlifyIdentity from '../config/identity';
 
 function Auth({ children }) {
   const [user, setUser] = useState(netlifyIdentity.currentUser());
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    netlifyIdentity.on('init', user => {
+      setUser(user);
+      setLoading(false);
+    });
     netlifyIdentity.on('login', user => setUser(user));
     netlifyIdentity.on('logout', () => setUser(null));
-    netlifyIdentity.on('error', err => console.error('Netlify Identity error:', err));
+    netlifyIdentity.on('error', err => {
+      console.error('Netlify Identity error:', err);
+      setLoading(false);
+    });
 
     return () => {
+      netlifyIdentity.off('init');
       netlifyIdentity.off('login');
       netlifyIdentity.off('logout');
       netlifyIdentity.off('error');
     };
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-gray-600">Loading...</div>
+      </div>
+    );
+  }
 
   const handleLogin = () => {
     netlifyIdentity.open('login');
