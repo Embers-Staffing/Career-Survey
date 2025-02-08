@@ -46,5 +46,14 @@ export const SURVEY_OPTIONS = {
     'Cost Estimator/Quantity Surveyor',
     'Project Management'
   ],
+  certifications: [
+    'OHSR (Occupational Health and Safety Representative)',
+    'First Aid',
+    'Fall Protection',
+    'Confined Space Entry',
+    'Equipment Operation',
+    'Project Management Professional (PMP)',
+    'Other'
+  ],
   // ... Add other option sets
 }; 
