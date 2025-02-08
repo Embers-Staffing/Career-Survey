@@ -76,6 +76,47 @@ function Recommendations() {
     return paths;
   };
 
+  // Helper function to get missing recommended certifications
+  const getRecommendedCertifications = () => {
+    const currentCerts = state.skills?.certifications || [];
+    const recommendations = [];
+
+    // Check for basic safety certifications
+    if (!currentCerts.includes('WHMIS (Workplace Hazardous Materials Information System)')) {
+      recommendations.push({
+        name: 'WHMIS Certification',
+        description: 'Essential safety certification required in most Canadian workplaces'
+      });
+    }
+
+    if (!currentCerts.includes('Construction Safety Training System (CSTS)')) {
+      recommendations.push({
+        name: 'CSTS Training',
+        description: 'Standard construction safety training for Canadian worksites'
+      });
+    }
+
+    // Check for role-specific certifications
+    if (state.goals?.longTerm?.includes('management')) {
+      if (!currentCerts.includes('Gold Seal Certification')) {
+        recommendations.push({
+          name: 'Gold Seal Certification',
+          description: 'Recognized management excellence in Canadian construction'
+        });
+      }
+    }
+
+    // Add Working at Heights if not present
+    if (!currentCerts.includes('Working at Heights')) {
+      recommendations.push({
+        name: 'Working at Heights',
+        description: 'Required for most construction work in Canada'
+      });
+    }
+
+    return recommendations;
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -134,16 +175,15 @@ function Recommendations() {
           <div className="mt-4">
             <p className="text-gray-600">Based on your current experience level and career goals:</p>
             <ul className="mt-4 space-y-2">
-              {!state.skills?.certifications?.includes('OHSR') && (
-                <li className="flex items-start">
+              {getRecommendedCertifications().map((cert, index) => (
+                <li key={index} className="flex items-start">
                   <span className="text-green-500 mr-2">✓</span>
                   <div>
-                    <span className="font-medium">OHSR Certification</span>
-                    <p className="text-sm text-gray-500">Essential for safety roles and management positions</p>
+                    <span className="font-medium">{cert.name}</span>
+                    <p className="text-sm text-gray-500">{cert.description}</p>
                   </div>
                 </li>
-              )}
-              {/* Add more dynamic recommendations */}
+              ))}
             </ul>
           </div>
         </div>
