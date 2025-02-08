@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useSurvey } from '../context/SurveyContext';
-import html2pdf from 'html2pdf.js';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 function Recommendations() {
   const { state } = useSurvey();
@@ -14,19 +15,23 @@ function Recommendations() {
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
     const element = contentRef.current;
-    const opt = {
-      margin: 1,
-      filename: 'career-recommendations.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
 
     try {
-      await html2pdf().set(opt).from(element).save();
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        logging: false,
+        useCORS: true
+      });
+      
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('career-recommendations.pdf');
     } catch (error) {
       console.error('PDF generation failed:', error);
-      // Could add error notification here
     } finally {
       setIsGeneratingPDF(false);
     }
