@@ -12,16 +12,21 @@ const initialState = {
   },
   personalityTraits: {
     myersBriggs: {
-      attention: [], // Allow multiple selections
+      attention: [],
       information: [],
       decisions: [],
       lifestyle: []
     },
-    hollandCode: [] // Array to store up to 3 selections
+    hollandCode: []
   },
   skills: {
     technical: [],
-    certifications: ''
+    certifications: '',
+    experience: {
+      role: '',
+      types: [],
+      projectSize: ''
+    }
   },
   workPreferences: {
     roles: [],

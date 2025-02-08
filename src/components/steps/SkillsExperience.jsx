@@ -27,6 +27,16 @@ function SkillsExperience() {
     });
   };
 
+  const handleExperienceChange = (field, value) => {
+    dispatch({
+      type: 'UPDATE_NESTED_FIELD',
+      section: 'skills',
+      subsection: 'experience',
+      field,
+      value
+    });
+  };
+
   const technicalSkills = [
     {
       id: 'tools',
@@ -69,6 +79,24 @@ function SkillsExperience() {
     'Other'
   ];
 
+  const experienceTypes = [
+    'Residential Construction',
+    'Commercial Construction',
+    'Industrial Construction',
+    'Infrastructure/Heavy Civil',
+    'Specialty Trade',
+    'Remodeling/Renovation'
+  ];
+
+  const roleTypes = [
+    'General Labor',
+    'Skilled Trade Worker',
+    'Equipment Operator',
+    'Foreman/Supervisor',
+    'Project Manager',
+    'Other'
+  ];
+
   return (
     <div className="space-y-8">
       {/* Technical Skills Section */}
@@ -105,6 +133,81 @@ function SkillsExperience() {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* Work Experience Section */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Work Experience</h3>
+        
+        <div className="space-y-6">
+          {/* Previous Roles */}
+          <div>
+            <label className="block text-gray-700 mb-2">
+              What role best describes your most recent position?
+            </label>
+            <select
+              value={state.skills.experience?.role || ''}
+              onChange={(e) => handleExperienceChange('role', e.target.value)}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Select Role...</option>
+              {roleTypes.map(role => (
+                <option key={role} value={role}>{role}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Type of Construction Experience */}
+          <div>
+            <label className="block text-gray-700 mb-2">
+              What type of construction experience do you have?
+              <span className="text-sm text-gray-500 ml-2">(Select all that apply)</span>
+            </label>
+            <div className="grid gap-3 md:grid-cols-2">
+              {experienceTypes.map(type => {
+                const id = `exp-${type.toLowerCase().replace(/\s+/g, '-')}`;
+                return (
+                  <div key={type} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={id}
+                      checked={state.skills.experience?.types?.includes(type) || false}
+                      onChange={() => {
+                        const currentTypes = state.skills.experience?.types || [];
+                        const newTypes = currentTypes.includes(type)
+                          ? currentTypes.filter(t => t !== type)
+                          : [...currentTypes, type];
+                        handleExperienceChange('types', newTypes);
+                      }}
+                      className="rounded"
+                    />
+                    <label htmlFor={id} className="ml-2 cursor-pointer">
+                      {type}
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Project Size Experience */}
+          <div>
+            <label className="block text-gray-700 mb-2">
+              What size projects have you worked on?
+            </label>
+            <select
+              value={state.skills.experience?.projectSize || ''}
+              onChange={(e) => handleExperienceChange('projectSize', e.target.value)}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Select Project Size...</option>
+              <option value="small">Small (Under $500K)</option>
+              <option value="medium">Medium ($500K - $5M)</option>
+              <option value="large">Large ($5M - $20M)</option>
+              <option value="very-large">Very Large (Over $20M)</option>
+            </select>
+          </div>
         </div>
       </div>
 
