@@ -50,3 +50,5 @@ This project is a **React-based career survey application** specifically designe
 The application is deployed on Netlify with continuous deployment from the main branch.
 
 ### **Project Structure** 
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/70562caf-0ffe-42fc-9684-a564378034a0/deploy-status)](https://app.netlify.com/sites/career-survey/deploys)
