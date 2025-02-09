@@ -302,10 +302,10 @@ function Recommendations() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         {/* Action Buttons */}
-        <div className="flex justify-between mb-6 print:hidden">
+        <div className="flex justify-between mb-8 print:hidden">
           <div className="flex gap-4">
             <button
               onClick={handleNewSurvey}
@@ -425,8 +425,8 @@ function Recommendations() {
           </div>
         </div>
 
-        {/* Content to be printed/downloaded */}
-        <div ref={contentRef} className="bg-white print:p-0">
+        {/* Main Content */}
+        <div className="space-y-8 mb-12" ref={contentRef}>
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900">Your Career Recommendations</h2>
             <p className="mt-4 text-lg text-gray-600">
@@ -552,25 +552,25 @@ function Recommendations() {
 
           {/* Education Resources */}
           <EducationResources />
-
-          {/* Footer */}
-          <footer className="mt-12 text-center text-gray-600">
-            <div className="border-t pt-6">
-              <p className="mb-2">© Embers Staffing 2025</p>
-              <p className="text-sm">
-                Made with ❤️ by{' '}
-                <a 
-                  href="https://github.com/ArsCodeAmatoria" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800"
-                >
-                  ArsCodeAmatoria
-                </a>
-              </p>
-            </div>
-          </footer>
         </div>
+
+        {/* Footer */}
+        <footer className="mt-16 text-center text-gray-600 pb-8">
+          <div className="border-t pt-8">
+            <p className="mb-2">© Embers Staffing 2025</p>
+            <p className="text-sm">
+              Made with ❤️ by{' '}
+              <a 
+                href="https://github.com/ArsCodeAmatoria" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800"
+              >
+                ArsCodeAmatoria
+              </a>
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
