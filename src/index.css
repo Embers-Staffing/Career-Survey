@@ -81,6 +81,40 @@
   .print\:p-4 {
     padding: 1rem !important;
   }
+
+  /* Prevent page breaks inside important sections */
+  .rounded-lg,
+  .bg-white,
+  section,
+  article {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Force page breaks before major sections */
+  .mt-8,
+  .mt-12,
+  h2,
+  h3 {
+    page-break-before: auto !important;
+    break-before: auto !important;
+  }
+
+  /* Ensure headers stay with their content */
+  h2, h3, h4 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Add more margin between sections for clarity */
+  .space-y-8 > * + * {
+    margin-top: 2rem !important;
+  }
+
+  /* Ensure proper margins on pages */
+  @page {
+    margin: 2cm;
+  }
 }
 
 /* PDF-specific styles */
@@ -95,6 +129,34 @@
   /* Ensure proper text rendering */
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
+
+  /* Prevent section breaks */
+  & .rounded-lg,
+  & section,
+  & article {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Headers stay with content */
+  & h2,
+  & h3,
+  & h4 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Add space between sections */
+  & .space-y-8 > * + * {
+    margin-top: 2rem !important;
+  }
+
+  /* Ensure each major section starts on a new page if needed */
+  & .mt-8,
+  & .mt-12 {
+    page-break-before: auto !important;
+    break-before: auto !important;
+  }
 }
 
 .pdf-mode h2 {

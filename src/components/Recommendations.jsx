@@ -87,36 +87,56 @@ function Recommendations() {
       const content = contentRef.current;
       if (!content) return;
 
-      // Create a new jsPDF instance
-      const pdf = new jsPDF('p', 'mm', 'a4', true);
-      
+      // Add PDF mode class for better styling
+      content.classList.add('pdf-mode');
+
+      // Create a new jsPDF instance with better margins
+      const pdf = new jsPDF({
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'portrait',
+        compress: true,
+        margins: { // Add margins
+          top: 20,
+          right: 20,
+          bottom: 20,
+          left: 20
+        }
+      });
+
       // Update progress
       progressDiv.innerHTML = 'Capturing content...';
       
-      // Get all pages worth of content
+      // Improved canvas settings
       const canvas = await html2canvas(content, {
         scale: 2,
         useCORS: true,
         logging: false,
         windowWidth: content.scrollWidth,
-        windowHeight: content.scrollHeight
+        windowHeight: content.scrollHeight,
+        onclone: (clonedDoc) => {
+          // Add any specific styling to the cloned document
+          const clonedContent = clonedDoc.querySelector('.pdf-mode');
+          if (clonedContent) {
+            clonedContent.style.padding = '20px';
+            clonedContent.style.backgroundColor = 'white';
+          }
+        }
       });
 
-      // Update progress
-      progressDiv.innerHTML = 'Processing pages...';
-
-      // Calculate dimensions
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 295; // A4 height in mm
+      // Calculate dimensions with margins
+      const imgWidth = 210 - 40; // A4 width minus margins
+      const pageHeight = 297 - 40; // A4 height minus margins
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
       let heightLeft = imgHeight;
-      let position = 0;
+      let position = 20; // Start position after top margin
 
       // Add first page
       pdf.addImage(
         canvas.toDataURL('image/jpeg', 1.0),
         'JPEG',
-        0,
+        20, // left margin
         position,
         imgWidth,
         imgHeight,
@@ -125,20 +145,14 @@ function Recommendations() {
       );
       heightLeft -= pageHeight;
 
-      // Add subsequent pages if needed
-      let pageCount = 1;
+      // Add subsequent pages
       while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
+        position = heightLeft - imgHeight + 20; // Add margin
         pdf.addPage();
-        pageCount++;
-        
-        // Update progress with page count
-        progressDiv.innerHTML = `Processing page ${pageCount}...`;
-        
         pdf.addImage(
           canvas.toDataURL('image/jpeg', 1.0),
           'JPEG',
-          0,
+          20, // left margin
           position,
           imgWidth,
           imgHeight,
@@ -148,8 +162,8 @@ function Recommendations() {
         heightLeft -= pageHeight;
       }
 
-      // Update progress
-      progressDiv.innerHTML = 'Finalizing PDF...';
+      // Remove PDF mode class
+      content.classList.remove('pdf-mode');
 
       // Save the PDF
       pdf.save('construction-career-recommendations.pdf');
