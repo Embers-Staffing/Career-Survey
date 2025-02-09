@@ -275,37 +275,110 @@ function Recommendations() {
   const getRecommendedCertifications = () => {
     const currentCerts = state.skills?.certifications || [];
     const recommendations = [];
+    const careerGoals = state.goals?.longTerm || [];
+    const experience = state.skills?.yearsExperience || 0;
+    const currentRole = state.personalInfo?.currentRole || '';
 
-    // Check for basic safety certifications
-    if (!currentCerts.includes('WHMIS (Workplace Hazardous Materials Information System)')) {
-      recommendations.push({
-        name: 'WHMIS Certification',
-        description: 'Essential safety certification required in most Canadian workplaces'
-      });
-    }
-
-    if (!currentCerts.includes('Construction Safety Training System (CSTS)')) {
-      recommendations.push({
-        name: 'CSTS Training',
-        description: 'Standard construction safety training for Canadian worksites'
-      });
-    }
-
-    // Check for role-specific certifications
-    if (state.goals?.longTerm?.includes('management')) {
-      if (!currentCerts.includes('Gold Seal Certification')) {
-        recommendations.push({
-          name: 'Gold Seal Certification',
-          description: 'Recognized management excellence in Canadian construction'
-        });
-      }
-    }
-
-    // Add Working at Heights if not present
-    if (!currentCerts.includes('Working at Heights')) {
-      recommendations.push({
+    // Essential Safety Certifications
+    const essentialCerts = [
+      {
+        name: 'WHMIS (Workplace Hazardous Materials Information System)',
+        description: 'Essential safety certification required in most Canadian workplaces',
+        priority: 'High',
+        timeline: '1-2 days',
+        cost: '$50-100',
+        provider: 'Canadian Centre for Occupational Health and Safety'
+      },
+      {
+        name: 'Construction Safety Training System (CSTS)',
+        description: 'Standard construction safety training for Canadian worksites',
+        priority: 'High',
+        timeline: '6-8 hours',
+        cost: '$100-150',
+        provider: 'Construction Safety Association'
+      },
+      {
         name: 'Working at Heights',
-        description: 'Required for most construction work in Canada'
+        description: 'Required for most construction work in Canada',
+        priority: 'High',
+        timeline: '1 day',
+        cost: '$150-200',
+        provider: 'Infrastructure Health & Safety Association'
+      },
+      {
+        name: 'First Aid & CPR',
+        description: 'Essential emergency response certification',
+        priority: 'Medium',
+        timeline: '2 days',
+        cost: '$120-180',
+        provider: 'Red Cross / St. John Ambulance'
+      }
+    ];
+
+    // Management Track Certifications
+    const managementCerts = [
+      {
+        name: 'Gold Seal Certification',
+        description: 'Recognized management excellence in Canadian construction',
+        priority: 'High',
+        timeline: '3-5 years',
+        cost: '$1,000-1,500',
+        provider: 'Canadian Construction Association',
+        requirements: '5 years experience required'
+      },
+      {
+        name: 'Project Management Professional (PMP)',
+        description: 'Globally recognized project management certification',
+        priority: 'Medium',
+        timeline: '6 months preparation',
+        cost: '$500-700',
+        provider: 'Project Management Institute',
+        requirements: '4,500 hours leading projects'
+      }
+    ];
+
+    // Technical Specialization Certifications
+    const technicalCerts = [
+      {
+        name: 'Building Information Modeling (BIM)',
+        description: 'Essential for modern construction technology adoption',
+        priority: 'Medium',
+        timeline: '2-3 months',
+        cost: '$800-1,200',
+        provider: 'Various accredited institutions'
+      },
+      {
+        name: 'Leadership in Energy and Environmental Design (LEED)',
+        description: 'Key for sustainable construction practices',
+        priority: 'Medium',
+        timeline: '2-4 months',
+        cost: '$600-800',
+        provider: 'Canada Green Building Council'
+      }
+    ];
+
+    // Add essential certifications if missing
+    essentialCerts.forEach(cert => {
+      if (!currentCerts.includes(cert.name)) {
+        recommendations.push(cert);
+      }
+    });
+
+    // Add management certifications if career goals align
+    if (careerGoals.includes('management') || currentRole.toLowerCase().includes('supervisor')) {
+      managementCerts.forEach(cert => {
+        if (!currentCerts.includes(cert.name) && experience >= 3) {
+          recommendations.push(cert);
+        }
+      });
+    }
+
+    // Add technical certifications based on experience and goals
+    if (experience >= 2 || careerGoals.includes('technical_specialist')) {
+      technicalCerts.forEach(cert => {
+        if (!currentCerts.includes(cert.name)) {
+          recommendations.push(cert);
+        }
       });
     }
 
@@ -514,18 +587,55 @@ function Recommendations() {
           <div className="mt-8 bg-white rounded-lg shadow p-6">
             <h3 className="text-xl font-semibold text-gray-900">Recommended Training & Certifications</h3>
             <div className="mt-4">
-              <p className="text-gray-600">Based on your current experience level and career goals:</p>
-              <ul className="mt-4 space-y-2">
+              <p className="text-gray-600">Based on your current experience level and career goals, here are your personalized certification recommendations:</p>
+              
+              <div className="mt-6 space-y-6">
                 {getRecommendedCertifications().map((cert, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-green-500 mr-2">✓</span>
-                    <div>
-                      <span className="font-medium">{cert.name}</span>
-                      <p className="text-sm text-gray-500">{cert.description}</p>
+                  <div key={index} className="border rounded-lg p-4 bg-gray-50">
+                    <div className="flex justify-between items-start">
+                      <h4 className="text-lg font-medium text-gray-900">{cert.name}</h4>
+                      <span className={`px-3 py-1 rounded-full text-sm ${
+                        cert.priority === 'High' 
+                          ? 'bg-red-100 text-red-800' 
+                          : 'bg-blue-100 text-blue-800'
+                      }`}>
+                        {cert.priority} Priority
+                      </span>
                     </div>
-                  </li>
+                    
+                    <p className="mt-2 text-gray-600">{cert.description}</p>
+                    
+                    <div className="mt-4 grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Timeline</p>
+                        <p className="mt-1 text-gray-900">{cert.timeline}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Estimated Cost</p>
+                        <p className="mt-1 text-gray-900">{cert.cost}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <p className="text-sm font-medium text-gray-500">Provider</p>
+                      <p className="mt-1 text-gray-900">{cert.provider}</p>
+                    </div>
+                    
+                    {cert.requirements && (
+                      <div className="mt-4">
+                        <p className="text-sm font-medium text-gray-500">Requirements</p>
+                        <p className="mt-1 text-gray-900">{cert.requirements}</p>
+                      </div>
+                    )}
+                  </div>
                 ))}
-              </ul>
+              </div>
+              
+              <div className="mt-6 bg-blue-50 rounded-lg p-4">
+                <p className="text-sm text-blue-800">
+                  <strong>Pro Tip:</strong> Many of these certifications may be eligible for funding or tax credits through various Canadian construction industry programs.
+                </p>
+              </div>
             </div>
           </div>
 
