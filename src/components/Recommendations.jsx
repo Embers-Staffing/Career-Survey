@@ -90,22 +90,28 @@ function Recommendations() {
       // Add PDF mode class for better styling
       content.classList.add('pdf-mode');
 
-      // Wait for any animations/transitions to complete
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Wait for any animations/transitions to complete and images to load
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       // Update progress
       progressDiv.innerHTML = 'Capturing content...';
+
+      // Get scroll position
+      const scrollPos = window.scrollY;
 
       // Improved canvas settings
       const canvas = await html2canvas(content, {
         scale: 2,
         useCORS: true,
-        logging: true, // Enable logging for debugging
+        logging: true,
         allowTaint: true,
         foreignObjectRendering: true,
+        scrollX: 0,
         scrollY: -window.scrollY,
         windowWidth: content.scrollWidth,
         windowHeight: content.scrollHeight,
+        x: 0,
+        y: window.scrollY,
         onclone: (clonedDoc) => {
           const clonedContent = clonedDoc.querySelector('.pdf-mode');
           if (clonedContent) {
@@ -116,54 +122,73 @@ function Recommendations() {
             clonedContent.style.height = 'auto';
             clonedContent.style.padding = '20px';
             clonedContent.style.backgroundColor = 'white';
+            clonedContent.style.overflow = 'visible';
             
             // Force all sections to be visible
-            clonedContent.querySelectorAll('section, div').forEach(el => {
+            clonedContent.querySelectorAll('section, div, p, h1, h2, h3, h4, h5, h6').forEach(el => {
               el.style.display = 'block';
               el.style.height = 'auto';
               el.style.overflow = 'visible';
+              el.style.opacity = '1';
+              el.style.visibility = 'visible';
+            });
+
+            // Ensure lists are visible
+            clonedContent.querySelectorAll('ul, li').forEach(el => {
+              el.style.display = 'list-item';
+              el.style.visibility = 'visible';
+            });
+
+            // Fix grid layouts
+            clonedContent.querySelectorAll('.grid').forEach(el => {
+              el.style.display = 'block';
+              el.style.width = '100%';
             });
           }
         }
       });
 
+      // Restore scroll position
+      window.scrollTo(0, scrollPos);
+
       // Create PDF with proper dimensions
-      const imgWidth = 210 - 40; // A4 width minus margins (in mm)
+      const imgWidth = 210 - 20; // A4 width minus margins (in mm)
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       const pdf = new jsPDF({
         unit: 'mm',
         format: 'a4',
-        orientation: 'portrait'
+        orientation: 'portrait',
+        compress: true
       });
 
-      // Add content to PDF
+      // Add content to PDF with margins
       pdf.addImage(
         canvas.toDataURL('image/jpeg', 1.0),
         'JPEG',
-        20, // left margin
-        20, // top margin
+        10, // left margin
+        10, // top margin
         imgWidth,
         imgHeight,
         undefined,
-        'FAST'
+        'MEDIUM' // Lower quality for better performance
       );
 
       // Add additional pages if needed
-      const pageHeight = 297 - 40; // A4 height minus margins
+      const pageHeight = 297 - 20; // A4 height minus margins
       let heightLeft = imgHeight - pageHeight;
-      let position = -(pageHeight); // Start position for next pages
+      let position = -(pageHeight);
 
       while (heightLeft >= 0) {
         pdf.addPage();
         pdf.addImage(
           canvas.toDataURL('image/jpeg', 1.0),
           'JPEG',
-          20,
+          10,
           position,
           imgWidth,
           imgHeight,
           undefined,
-          'FAST'
+          'MEDIUM'
         );
         heightLeft -= pageHeight;
         position -= pageHeight;
