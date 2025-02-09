@@ -132,7 +132,7 @@ const INDUSTRY_EVENTS = {
 
 function NetworkingEvents() {
   return (
-    <div className="mt-8 bg-white rounded-lg shadow p-6">
+    <div id="industry-events" className="mt-8 bg-white rounded-lg shadow p-6">
       <h3 className="text-xl font-semibold text-gray-900">Industry Events Calendar</h3>
       <p className="mt-2 text-gray-600">
         Upcoming networking and professional development opportunities:

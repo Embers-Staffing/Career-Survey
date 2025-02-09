@@ -241,3 +241,56 @@
     display: none !important;
   }
 }
+
+/* PDF and print-specific styles */
+@media print, .pdf-mode {
+  /* Force grid layouts to show in print/PDF */
+  .grid {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .grid > div {
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Ensure content visibility */
+  .rounded-lg,
+  .bg-white,
+  section,
+  article,
+  .mt-8,
+  .mt-12 {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Fix specific components */
+  #regional-insights,
+  #certification-roadmap,
+  #industry-events,
+  #industry-conferences {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Ensure text content is visible */
+  p, h2, h3, h4, li {
+    color: black !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Force background colors to show in print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}

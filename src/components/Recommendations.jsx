@@ -563,7 +563,6 @@ function Recommendations() {
           <MentorshipPrograms />
           <WorkLifeBalance />
           <FinancialPlanning />
-          <CertificationRoadmaps />
 
           {/* Professional Associations */}
           <ProfessionalAssociations />

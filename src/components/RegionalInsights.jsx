@@ -173,7 +173,7 @@ const MARKET_INSIGHTS = {
 
 function RegionalInsights() {
   return (
-    <div className="mt-8 bg-white rounded-lg shadow p-6">
+    <div id="regional-insights" className="mt-8 bg-white rounded-lg shadow p-6">
       <h3 className="text-xl font-semibold text-gray-900">Regional Market Insights</h3>
       <p className="mt-2 text-gray-600">
         Current market trends and opportunities by region:

@@ -152,7 +152,7 @@ const CERTIFICATION_PATHS = {
 
 function CertificationRoadmaps() {
   return (
-    <div className="mt-8 bg-white rounded-lg shadow p-6">
+    <div id="certification-roadmap" className="mt-8 bg-white rounded-lg shadow p-6">
       <h3 className="text-xl font-semibold text-gray-900">Certification Roadmaps</h3>
       <p className="mt-2 text-gray-600">
         Strategic certification paths to advance your construction career:
