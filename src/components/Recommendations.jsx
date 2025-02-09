@@ -9,6 +9,14 @@ import ProfessionalAssociations from './ProfessionalAssociations';
 import TechnologyTraining from './TechnologyTraining';
 import MentorshipPrograms from './MentorshipPrograms';
 import CareerTools from './CareerTools';
+import IndustryTrends from './IndustryTrends';
+import CertificationRoadmaps from './CertificationRoadmaps';
+import RegionalInsights from './RegionalInsights';
+import SuccessStories from './SuccessStories';
+import WorkLifeBalance from './WorkLifeBalance';
+import FinancialPlanning from './FinancialPlanning';
+import SpecializedTraining from './SpecializedTraining';
+import NetworkingEvents from './NetworkingEvents';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -440,6 +448,14 @@ function Recommendations() {
             </div>
           </div>
 
+          {/* Add Success Stories after Regional Insights */}
+          <IndustryTrends />
+          <RegionalInsights />
+          <SuccessStories />
+          <WorkLifeBalance />
+          <FinancialPlanning />
+          <CertificationRoadmaps />
+
           {/* Career Paths */}
           <div className="mt-8 bg-white rounded-lg shadow p-6">
             <h3 className="text-xl font-semibold text-gray-900">Career Progression Paths</h3>
@@ -502,8 +518,12 @@ function Recommendations() {
 
           {/* Add Technology Training before Professional Associations */}
           <TechnologyTraining />
+          <SpecializedTraining />
+          <NetworkingEvents />
           <MentorshipPrograms />
-          <CareerTools />
+          <WorkLifeBalance />
+          <FinancialPlanning />
+          <CertificationRoadmaps />
 
           {/* Professional Associations */}
           <ProfessionalAssociations />
