@@ -90,14 +90,13 @@ function Recommendations() {
       // Add PDF mode class for better styling
       content.classList.add('pdf-mode');
 
-      // Wait for any animations/transitions to complete and images to load
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Scroll to top and wait for content to be fully rendered
+      window.scrollTo(0, 0);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Update progress
-      progressDiv.innerHTML = 'Capturing content...';
-
-      // Get scroll position
-      const scrollPos = window.scrollY;
+      // Get the actual dimensions of the content
+      const contentWidth = content.offsetWidth;
+      const contentHeight = content.offsetHeight;
 
       // Improved canvas settings
       const canvas = await html2canvas(content, {
@@ -106,110 +105,77 @@ function Recommendations() {
         logging: true,
         allowTaint: true,
         foreignObjectRendering: true,
-        scrollX: 0,
-        scrollY: -window.scrollY,
-        windowWidth: content.scrollWidth,
-        windowHeight: content.scrollHeight,
-        x: 0,
-        y: window.scrollY,
+        width: contentWidth,
+        height: contentHeight,
+        windowWidth: contentWidth,
+        windowHeight: contentHeight,
         onclone: (clonedDoc) => {
           const clonedContent = clonedDoc.querySelector('.pdf-mode');
           if (clonedContent) {
-            // Ensure all content is visible
-            clonedContent.style.display = 'block';
+            // Make sure content is visible and properly positioned
+            clonedContent.style.width = `${contentWidth}px`;
+            clonedContent.style.height = `${contentHeight}px`;
             clonedContent.style.position = 'relative';
-            clonedContent.style.width = '100%';
-            clonedContent.style.height = 'auto';
-            clonedContent.style.padding = '20px';
-            clonedContent.style.backgroundColor = 'white';
-            clonedContent.style.overflow = 'visible';
+            clonedContent.style.top = '0';
+            clonedContent.style.left = '0';
+            clonedContent.style.transform = 'none';
+            clonedContent.style.display = 'block';
+            clonedContent.style.background = 'white';
             
-            // Force all sections to be visible
-            const sections = [
-              '#personality-analysis',
-              '#career-paths',
-              '#salary-potential',
-              '#regional-insights',
-              '#certification-roadmap',
-              '#industry-events',
-              '#industry-conferences',
-              '#technology-training',
-              '#specialized-training',
-              '#mentorship-programs',
-              '#work-life-balance',
-              '#financial-planning',
-              '#professional-associations',
-              '#job-boards',
-              '#education-resources'
-            ];
-
-            sections.forEach(selector => {
-              const section = clonedContent.querySelector(selector);
-              if (section) {
-                section.style.display = 'block';
-                section.style.visibility = 'visible';
-                section.style.opacity = '1';
-                section.style.height = 'auto';
-                section.style.overflow = 'visible';
-              }
-            });
-
-            // Force all content elements to be visible
-            clonedContent.querySelectorAll('div, section, article, p, h1, h2, h3, h4, h5, h6, ul, li, span').forEach(el => {
-              el.style.display = el.tagName.toLowerCase() === 'li' ? 'list-item' : 'block';
-              el.style.visibility = 'visible';
+            // Force all content to be visible
+            const elements = clonedContent.querySelectorAll('*');
+            elements.forEach(el => {
+              el.style.display = 'block';
               el.style.opacity = '1';
-              el.style.height = 'auto';
-              el.style.overflow = 'visible';
+              el.style.visibility = 'visible';
+              el.style.transform = 'none';
+              el.style.background = 'white';
+              if (el.tagName.toLowerCase() === 'li') {
+                el.style.display = 'list-item';
+              }
             });
           }
         }
       });
 
-      // Restore scroll position
-      window.scrollTo(0, scrollPos);
-
       // Create PDF with proper dimensions
-      const imgWidth = 210 - 20; // A4 width minus margins (in mm)
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
       const pdf = new jsPDF({
-        unit: 'mm',
+        unit: 'px',
         format: 'a4',
-        orientation: 'portrait',
-        compress: true
+        orientation: 'portrait'
       });
 
-      // Add content to PDF with margins
+      // Calculate dimensions
+      const imgProps = pdf.getImageProperties(canvas.toDataURL('image/jpeg', 1.0));
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      // Add content to PDF
       pdf.addImage(
         canvas.toDataURL('image/jpeg', 1.0),
         'JPEG',
-        10, // left margin
-        10, // top margin
-        imgWidth,
-        imgHeight,
-        undefined,
-        'MEDIUM' // Lower quality for better performance
+        0,
+        0,
+        pdfWidth,
+        pdfHeight
       );
 
       // Add additional pages if needed
-      const pageHeight = 297 - 20; // A4 height minus margins
-      let heightLeft = imgHeight - pageHeight;
-      let position = -(pageHeight);
+      let heightLeft = pdfHeight;
+      let position = -pdf.internal.pageSize.getHeight();
 
-      while (heightLeft >= 0) {
+      while (heightLeft >= pdf.internal.pageSize.getHeight()) {
         pdf.addPage();
         pdf.addImage(
           canvas.toDataURL('image/jpeg', 1.0),
           'JPEG',
-          10,
+          0,
           position,
-          imgWidth,
-          imgHeight,
-          undefined,
-          'MEDIUM'
+          pdfWidth,
+          pdfHeight
         );
-        heightLeft -= pageHeight;
-        position -= pageHeight;
+        heightLeft -= pdf.internal.pageSize.getHeight();
+        position -= pdf.internal.pageSize.getHeight();
       }
 
       // Remove PDF mode class
