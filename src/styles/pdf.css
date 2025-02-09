@@ -12,8 +12,9 @@
 }
 
 .pdf-logo {
-  width: 120px;
-  margin-bottom: 20px;
+  width: 200px !important;
+  margin: 0 auto 20px auto !important;
+  display: block !important;
 }
 
 .pdf-section {

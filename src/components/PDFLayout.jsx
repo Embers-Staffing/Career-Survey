@@ -5,7 +5,18 @@ function PDFLayout({ data, recommendations }) {
     <div className="pdf-document">
       {/* Header */}
       <div className="pdf-header">
-        <img src="/embers-logo.png" alt="Embers Staffing" className="pdf-logo" />
+        <img 
+          src="/embers-logo.png" 
+          alt="Embers Staffing" 
+          className="pdf-logo"
+          style={{
+            width: '200px',
+            marginBottom: '20px',
+            display: 'block',
+            marginLeft: 'auto',
+            marginRight: 'auto'
+          }}
+        />
         <h1>Construction Career Recommendations</h1>
         <div className="pdf-date">{new Date().toLocaleDateString()}</div>
       </div>

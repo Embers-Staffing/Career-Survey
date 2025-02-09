@@ -24,8 +24,9 @@
   }
 
   .print-logo {
-    width: 100px;
-    margin-bottom: 1cm;
+    width: 200px !important;
+    margin: 0 auto 20px auto !important;
+    display: block !important;
   }
 
   .print-section {
