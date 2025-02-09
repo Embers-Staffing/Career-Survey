@@ -86,7 +86,7 @@ function Recommendations() {
         />
       );
 
-      const response = await fetch('/api/generate-print', {
+      const response = await fetch('/.netlify/functions/generate-print', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
