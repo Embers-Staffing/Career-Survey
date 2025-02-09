@@ -6,7 +6,7 @@ function PDFLayout({ data, recommendations }) {
       {/* Header */}
       <div className="pdf-header">
         <img 
-          src="/embers-logo.png" 
+          src={process.env.PUBLIC_URL + '/embers-logo.png'}
           alt="Embers Staffing" 
           className="pdf-logo"
           style={{

@@ -13,8 +13,10 @@
 
 .pdf-logo {
   width: 200px !important;
+  height: auto !important;
   margin: 0 auto 20px auto !important;
   display: block !important;
+  object-fit: contain !important;
 }
 
 .pdf-section {
