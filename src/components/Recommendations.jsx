@@ -81,114 +81,95 @@ function Recommendations() {
       // Show progress message
       const progressDiv = document.createElement('div');
       progressDiv.className = 'fixed top-4 right-4 bg-blue-100 text-blue-800 px-4 py-2 rounded shadow-lg';
-      progressDiv.innerHTML = 'Generating PDF...';
+      progressDiv.innerHTML = 'Preparing content...';
       document.body.appendChild(progressDiv);
 
       const content = contentRef.current;
-      if (!content) return;
-
-      // Add PDF mode class for better styling
-      content.classList.add('pdf-mode');
-
-      // Scroll to top and wait for content to be fully rendered
-      window.scrollTo(0, 0);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Get the actual dimensions of the content
-      const contentWidth = content.offsetWidth;
-      const contentHeight = content.offsetHeight;
-
-      // Improved canvas settings
-      const canvas = await html2canvas(content, {
-        scale: 2,
-        useCORS: true,
-        logging: true,
-        allowTaint: true,
-        foreignObjectRendering: true,
-        width: contentWidth,
-        height: contentHeight,
-        windowWidth: contentWidth,
-        windowHeight: contentHeight,
-        onclone: (clonedDoc) => {
-          const clonedContent = clonedDoc.querySelector('.pdf-mode');
-          if (clonedContent) {
-            // Make sure content is visible and properly positioned
-            clonedContent.style.width = `${contentWidth}px`;
-            clonedContent.style.height = `${contentHeight}px`;
-            clonedContent.style.position = 'relative';
-            clonedContent.style.top = '0';
-            clonedContent.style.left = '0';
-            clonedContent.style.transform = 'none';
-            clonedContent.style.display = 'block';
-            clonedContent.style.background = 'white';
-            
-            // Force all content to be visible
-            const elements = clonedContent.querySelectorAll('*');
-            elements.forEach(el => {
-              el.style.display = 'block';
-              el.style.opacity = '1';
-              el.style.visibility = 'visible';
-              el.style.transform = 'none';
-              el.style.background = 'white';
-              if (el.tagName.toLowerCase() === 'li') {
-                el.style.display = 'list-item';
-              }
-            });
-          }
-        }
-      });
-
-      // Create PDF with proper dimensions
-      const pdf = new jsPDF({
-        unit: 'px',
-        format: 'a4',
-        orientation: 'portrait'
-      });
-
-      // Calculate dimensions
-      const imgProps = pdf.getImageProperties(canvas.toDataURL('image/jpeg', 1.0));
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      // Add content to PDF
-      pdf.addImage(
-        canvas.toDataURL('image/jpeg', 1.0),
-        'JPEG',
-        0,
-        0,
-        pdfWidth,
-        pdfHeight
-      );
-
-      // Add additional pages if needed
-      let heightLeft = pdfHeight;
-      let position = -pdf.internal.pageSize.getHeight();
-
-      while (heightLeft >= pdf.internal.pageSize.getHeight()) {
-        pdf.addPage();
-        pdf.addImage(
-          canvas.toDataURL('image/jpeg', 1.0),
-          'JPEG',
-          0,
-          position,
-          pdfWidth,
-          pdfHeight
-        );
-        heightLeft -= pdf.internal.pageSize.getHeight();
-        position -= pdf.internal.pageSize.getHeight();
+      if (!content) {
+        throw new Error('Content not found');
       }
 
-      // Remove PDF mode class
+      // Add PDF mode class and wait for styles to apply
+      content.classList.add('pdf-mode');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      progressDiv.innerHTML = 'Capturing content...';
+
+      try {
+        // Capture content
+        const canvas = await html2canvas(content, {
+          scale: 1, // Reduced scale for better performance
+          useCORS: true,
+          allowTaint: true,
+          logging: true,
+          backgroundColor: '#ffffff',
+          removeContainer: true,
+          onclone: (clonedDoc) => {
+            const clonedContent = clonedDoc.querySelector('.pdf-mode');
+            if (clonedContent) {
+              clonedContent.style.width = '100%';
+              clonedContent.style.margin = '0';
+              clonedContent.style.padding = '20px';
+              clonedContent.style.backgroundColor = 'white';
+              clonedContent.style.minHeight = '100%';
+              
+              // Ensure all elements are visible
+              clonedContent.querySelectorAll('*').forEach(el => {
+                el.style.display = el.tagName.toLowerCase() === 'li' ? 'list-item' : 'block';
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
+              });
+            }
+          }
+        });
+
+        progressDiv.innerHTML = 'Generating PDF...';
+
+        // Create PDF
+        const imgData = canvas.toDataURL('image/jpeg', 0.8);
+        const pdf = new jsPDF({
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait'
+        });
+
+        // Calculate dimensions
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = pageWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        // Add pages
+        let heightLeft = imgHeight;
+        let position = 0;
+        let page = 1;
+
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, '', 'FAST');
+
+        while (heightLeft >= pageHeight) {
+          position = -pageHeight * page;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, '', 'FAST');
+          heightLeft -= pageHeight;
+          page++;
+        }
+
+        // Save PDF
+        progressDiv.innerHTML = 'Saving PDF...';
+        pdf.save('construction-career-recommendations.pdf');
+
+      } catch (captureError) {
+        console.error('Content capture error:', captureError);
+        throw new Error('Failed to capture content');
+      }
+
+      // Cleanup
       content.classList.remove('pdf-mode');
-
-      // Save the PDF
-      pdf.save('construction-career-recommendations.pdf');
-
-      // Remove progress indicator
       document.body.removeChild(progressDiv);
+
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert('Error generating PDF. Please try again.');
+      console.error('PDF generation error:', error);
+      alert(`Error generating PDF: ${error.message}. Please try again.`);
     } finally {
       setIsGeneratingPDF(false);
     }
