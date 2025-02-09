@@ -1,7 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { useSurvey } from '../context/SurveyContext';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 import { useNavigate } from 'react-router-dom';
 import EducationResources from './EducationResources';
 import JobBoards from './JobBoards';
@@ -18,11 +16,8 @@ import FinancialPlanning from './FinancialPlanning';
 import SpecializedTraining from './SpecializedTraining';
 import NetworkingEvents from './NetworkingEvents';
 import PDFLayout from './PDFLayout';
-import ReactDOM from 'react-dom';
-import html2pdf from 'html2pdf.js';
-import PrintLayout from './PrintLayout';
-import puppeteer from 'puppeteer';
 import ReactDOMServer from 'react-dom/server';
+import PrintLayout from './PrintLayout';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -148,7 +143,8 @@ function Recommendations() {
         />
       );
 
-      const response = await fetch('/api/generate-pdf', {
+      // Use your deployed API endpoint
+      const response = await fetch('/.netlify/functions/generate-pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
