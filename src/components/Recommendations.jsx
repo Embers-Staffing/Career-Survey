@@ -128,14 +128,34 @@ function Recommendations() {
       
       document.body.appendChild(pdfContent);
 
-      // Generate PDF
-      const pdf = await html2pdf().from(pdfContent).set({
+      // Wait for content to be fully rendered
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Generate PDF with better page handling
+      await html2pdf().set({
         margin: 10,
         filename: 'career-recommendations.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).save();
+        html2canvas: { 
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          scrollY: 0
+        },
+        jsPDF: { 
+          unit: 'mm', 
+          format: 'a4', 
+          orientation: 'portrait',
+          compress: true,
+          hotfixes: ['px_scaling']
+        },
+        pagebreak: { 
+          mode: ['avoid-all', 'css', 'legacy'],
+          before: '.page-break-before',
+          after: '.page-break-after',
+          avoid: ['tr', 'td', '.recommendation-card', '.timeline-section']
+        }
+      }).from(pdfContent).save();
 
       // Cleanup
       document.body.removeChild(pdfContent);

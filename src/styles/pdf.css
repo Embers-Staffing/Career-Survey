@@ -18,8 +18,10 @@
 }
 
 .pdf-section {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
   page-break-inside: avoid;
+  break-inside: avoid;
 }
 
 .summary-grid {
@@ -33,13 +35,15 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
-  margin: 20px 0;
+  margin: 30px 0;
 }
 
 .recommendation-card {
   border: 1px solid #e2e8f0;
   padding: 20px;
   border-radius: 8px;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 
 .career-step {
@@ -78,6 +82,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
+  margin: 30px 0;
 }
 
 .pdf-footer {
@@ -87,4 +92,38 @@
   text-align: center;
   font-size: 0.9em;
   color: #666;
+}
+
+/* Add page break controls */
+.page-break-before {
+  page-break-before: always;
+  break-before: page;
+}
+
+.page-break-after {
+  page-break-after: always;
+  break-after: page;
+}
+
+/* Prevent unwanted breaks */
+.pdf-section {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.recommendation-card,
+.timeline-section {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Adjust spacing for better page flow */
+.pdf-section {
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+}
+
+.recommendations-grid,
+.timeline {
+  margin: 30px 0;
 } 
