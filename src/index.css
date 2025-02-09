@@ -244,53 +244,72 @@
 
 /* PDF and print-specific styles */
 @media print, .pdf-mode {
-  /* Force grid layouts to show in print/PDF */
+  /* Force all sections to display */
+  #personality-analysis,
+  #career-paths,
+  #salary-potential,
+  #regional-insights,
+  #certification-roadmap,
+  #industry-events,
+  #industry-conferences,
+  #technology-training,
+  #specialized-training,
+  #mentorship-programs,
+  #work-life-balance,
+  #financial-planning,
+  #professional-associations,
+  #job-boards,
+  #education-resources {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin: 2rem 0 !important;
+  }
+
+  /* Force grid layouts to display properly */
   .grid {
     display: block !important;
     width: 100% !important;
   }
 
   .grid > div {
+    display: block !important;
     width: 100% !important;
     margin-bottom: 1rem !important;
-  }
-
-  /* Ensure content visibility */
-  .rounded-lg,
-  .bg-white,
-  section,
-  article,
-  .mt-8,
-  .mt-12 {
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
     page-break-inside: avoid !important;
-    break-inside: avoid !important;
   }
 
-  /* Fix specific components */
-  #regional-insights,
-  #certification-roadmap,
-  #industry-events,
-  #industry-conferences {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-  /* Ensure text content is visible */
-  p, h2, h3, h4, li {
+  /* Ensure all text content is visible */
+  h1, h2, h3, h4, h5, h6, p, li, span {
     color: black !important;
     opacity: 1 !important;
     visibility: visible !important;
   }
 
-  /* Force background colors to show in print */
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
+  /* Force background colors and borders */
+  .bg-white,
+  .bg-gray-50,
+  .bg-gray-100,
+  .rounded-lg {
+    background-color: white !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  .mt-8,
+  .mt-12,
+  section,
+  article {
+    page-break-before: auto !important;
+    page-break-after: auto !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
   }
 }

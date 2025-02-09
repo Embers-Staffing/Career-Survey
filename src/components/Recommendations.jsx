@@ -125,24 +125,42 @@ function Recommendations() {
             clonedContent.style.overflow = 'visible';
             
             // Force all sections to be visible
-            clonedContent.querySelectorAll('section, div, p, h1, h2, h3, h4, h5, h6').forEach(el => {
-              el.style.display = 'block';
+            const sections = [
+              '#personality-analysis',
+              '#career-paths',
+              '#salary-potential',
+              '#regional-insights',
+              '#certification-roadmap',
+              '#industry-events',
+              '#industry-conferences',
+              '#technology-training',
+              '#specialized-training',
+              '#mentorship-programs',
+              '#work-life-balance',
+              '#financial-planning',
+              '#professional-associations',
+              '#job-boards',
+              '#education-resources'
+            ];
+
+            sections.forEach(selector => {
+              const section = clonedContent.querySelector(selector);
+              if (section) {
+                section.style.display = 'block';
+                section.style.visibility = 'visible';
+                section.style.opacity = '1';
+                section.style.height = 'auto';
+                section.style.overflow = 'visible';
+              }
+            });
+
+            // Force all content elements to be visible
+            clonedContent.querySelectorAll('div, section, article, p, h1, h2, h3, h4, h5, h6, ul, li, span').forEach(el => {
+              el.style.display = el.tagName.toLowerCase() === 'li' ? 'list-item' : 'block';
+              el.style.visibility = 'visible';
+              el.style.opacity = '1';
               el.style.height = 'auto';
               el.style.overflow = 'visible';
-              el.style.opacity = '1';
-              el.style.visibility = 'visible';
-            });
-
-            // Ensure lists are visible
-            clonedContent.querySelectorAll('ul, li').forEach(el => {
-              el.style.display = 'list-item';
-              el.style.visibility = 'visible';
-            });
-
-            // Fix grid layouts
-            clonedContent.querySelectorAll('.grid').forEach(el => {
-              el.style.display = 'block';
-              el.style.width = '100%';
             });
           }
         }
@@ -473,6 +491,7 @@ function Recommendations() {
 
         {/* Main Content */}
         <div className="space-y-8 mb-12" ref={contentRef}>
+          {/* Title */}
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900">Your Career Recommendations</h2>
             <p className="mt-4 text-lg text-gray-600">
@@ -481,7 +500,7 @@ function Recommendations() {
           </div>
 
           {/* Personality Analysis */}
-          <div className="mt-12 bg-white rounded-lg shadow p-6">
+          <div id="personality-analysis" className="mt-12 bg-white rounded-lg shadow p-6">
             <h3 className="text-xl font-semibold text-gray-900">Personality Analysis</h3>
             <div className="mt-4">
               {analyzePersonalityType() && (
@@ -522,7 +541,7 @@ function Recommendations() {
           <CertificationRoadmaps />
 
           {/* Career Paths */}
-          <div className="mt-8 bg-white rounded-lg shadow p-6">
+          <div id="career-paths" className="mt-8 bg-white rounded-lg shadow p-6">
             <h3 className="text-xl font-semibold text-gray-900">Career Progression Paths</h3>
             <div className="mt-4 grid gap-6 md:grid-cols-2">
               {getCareerPaths().map((path, index) => (
@@ -566,7 +585,7 @@ function Recommendations() {
           </div>
 
           {/* Salary Potential */}
-          <div className="mt-8 bg-white rounded-lg shadow p-6">
+          <div id="salary-potential" className="mt-8 bg-white rounded-lg shadow p-6">
             <h3 className="text-xl font-semibold text-gray-900">Salary Potential</h3>
             <div className="mt-4">
               <p className="text-gray-600">
@@ -581,20 +600,30 @@ function Recommendations() {
             </div>
           </div>
 
-          {/* Add Technology Training before Professional Associations */}
+          {/* Technology Training */}
           <TechnologyTraining />
+          
+          {/* Specialized Training */}
           <SpecializedTraining />
+          
+          {/* Industry Events */}
           <NetworkingEvents />
+          
+          {/* Mentorship Programs */}
           <MentorshipPrograms />
+          
+          {/* Work-Life Balance */}
           <WorkLifeBalance />
+          
+          {/* Financial Planning */}
           <FinancialPlanning />
-
+          
           {/* Professional Associations */}
           <ProfessionalAssociations />
-
+          
           {/* Job Boards */}
           <JobBoards />
-
+          
           {/* Education Resources */}
           <EducationResources />
         </div>
