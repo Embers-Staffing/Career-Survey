@@ -18,6 +18,7 @@ import NetworkingEvents from './NetworkingEvents';
 import PDFLayout from './PDFLayout';
 import ReactDOMServer from 'react-dom/server';
 import PrintLayout from './PrintLayout';
+import html2pdf from 'html2pdf.js';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -132,38 +133,15 @@ function Recommendations() {
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
     try {
-      const content = ReactDOMServer.renderToString(
-        <PDFLayout 
-          data={state} 
-          recommendations={{
-            calculateSalaryRanges,
-            getCareerPaths,
-            getRecommendedCertifications
-          }}
-        />
-      );
-
-      // Use your deployed API endpoint
-      const response = await fetch('/.netlify/functions/generate-pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content }),
-      });
-
-      if (!response.ok) {
-        throw new Error('PDF generation failed');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'career-recommendations.pdf';
-      link.click();
-      window.URL.revokeObjectURL(url);
-
+      const element = contentRef.current;
+      const opt = {
+        margin: 1,
+        filename: 'career-recommendations.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      await html2pdf().set(opt).from(element).save();
     } catch (error) {
       console.error('PDF generation error:', error);
       alert('Error generating PDF. Please try again.');
