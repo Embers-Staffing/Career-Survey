@@ -502,7 +502,6 @@ function Recommendations() {
           <IndustryTrends />
           <RegionalInsights />
           <SuccessStories />
-          <FinancialPlanning />
           <CertificationRoadmaps />
 
           {/* Career Paths */}
