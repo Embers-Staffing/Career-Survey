@@ -20,6 +20,7 @@ import NetworkingEvents from './NetworkingEvents';
 import PDFLayout from './PDFLayout';
 import ReactDOM from 'react-dom';
 import html2pdf from 'html2pdf.js';
+import PrintLayout from './PrintLayout';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -75,7 +76,32 @@ function Recommendations() {
   };
 
   const handlePrint = () => {
+    // Create print layout
+    const printContent = document.createElement('div');
+    printContent.style.display = 'none';
+    
+    // Render print layout
+    ReactDOM.render(
+      <PrintLayout 
+        data={state} 
+        recommendations={{
+          calculateSalaryRanges,
+          getCareerPaths,
+          getRecommendedCertifications
+        }}
+      />, 
+      printContent
+    );
+    
+    // Add to document
+    document.body.appendChild(printContent);
+    
+    // Show print layout and trigger print
+    printContent.style.display = 'block';
     window.print();
+    
+    // Cleanup after printing
+    document.body.removeChild(printContent);
   };
 
   const handleDownloadPDF = async () => {
