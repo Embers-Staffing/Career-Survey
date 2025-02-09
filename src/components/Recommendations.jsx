@@ -536,7 +536,6 @@ function Recommendations() {
           <IndustryTrends />
           <RegionalInsights />
           <SuccessStories />
-          <WorkLifeBalance />
           <FinancialPlanning />
           <CertificationRoadmaps />
 
