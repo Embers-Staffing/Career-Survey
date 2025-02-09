@@ -155,3 +155,27 @@
   border-top: 1px solid #e2e8f0 !important;
   page-break-before: auto !important;
 }
+
+/* Add these styles for the PDF generation progress indicator */
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.fixed.top-4.right-4 {
+  animation: slideIn 0.3s ease-out;
+  z-index: 50;
+}
+
+/* Ensure progress indicator is visible in print mode */
+@media print {
+  .fixed.top-4.right-4 {
+    display: none !important;
+  }
+}

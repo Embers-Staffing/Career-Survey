@@ -78,20 +78,32 @@ function Recommendations() {
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
     try {
+      // Show progress message
+      const progressDiv = document.createElement('div');
+      progressDiv.className = 'fixed top-4 right-4 bg-blue-100 text-blue-800 px-4 py-2 rounded shadow-lg';
+      progressDiv.innerHTML = 'Generating PDF...';
+      document.body.appendChild(progressDiv);
+
       const content = contentRef.current;
       if (!content) return;
 
       // Create a new jsPDF instance
       const pdf = new jsPDF('p', 'mm', 'a4', true);
       
+      // Update progress
+      progressDiv.innerHTML = 'Capturing content...';
+      
       // Get all pages worth of content
       const canvas = await html2canvas(content, {
-        scale: 2, // Higher scale for better quality
-        useCORS: true, // Enable loading external images
-        logging: false, // Disable logging
+        scale: 2,
+        useCORS: true,
+        logging: false,
         windowWidth: content.scrollWidth,
         windowHeight: content.scrollHeight
       });
+
+      // Update progress
+      progressDiv.innerHTML = 'Processing pages...';
 
       // Calculate dimensions
       const imgWidth = 210; // A4 width in mm
@@ -114,9 +126,15 @@ function Recommendations() {
       heightLeft -= pageHeight;
 
       // Add subsequent pages if needed
+      let pageCount = 1;
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
+        pageCount++;
+        
+        // Update progress with page count
+        progressDiv.innerHTML = `Processing page ${pageCount}...`;
+        
         pdf.addImage(
           canvas.toDataURL('image/jpeg', 1.0),
           'JPEG',
@@ -130,11 +148,16 @@ function Recommendations() {
         heightLeft -= pageHeight;
       }
 
+      // Update progress
+      progressDiv.innerHTML = 'Finalizing PDF...';
+
       // Save the PDF
       pdf.save('construction-career-recommendations.pdf');
+
+      // Remove progress indicator
+      document.body.removeChild(progressDiv);
     } catch (error) {
       console.error('Error generating PDF:', error);
-      // Optionally show error to user
       alert('Error generating PDF. Please try again.');
     } finally {
       setIsGeneratingPDF(false);
