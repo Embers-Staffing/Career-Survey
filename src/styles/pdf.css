@@ -1,0 +1,89 @@
+.pdf-document {
+  padding: 40px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+.pdf-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.pdf-logo {
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+.pdf-section {
+  margin-bottom: 30px;
+  page-break-inside: avoid;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  margin: 20px 0;
+}
+
+.recommendation-card {
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.career-step {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.step-number {
+  width: 24px;
+  height: 24px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.certification-item {
+  margin: 15px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.cert-details {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.pdf-footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 2px solid #e2e8f0;
+  text-align: center;
+  font-size: 0.9em;
+  color: #666;
+} 

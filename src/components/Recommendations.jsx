@@ -17,6 +17,9 @@ import WorkLifeBalance from './WorkLifeBalance';
 import FinancialPlanning from './FinancialPlanning';
 import SpecializedTraining from './SpecializedTraining';
 import NetworkingEvents from './NetworkingEvents';
+import PDFLayout from './PDFLayout';
+import ReactDOM from 'react-dom';
+import html2pdf from 'html2pdf.js';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -78,98 +81,41 @@ function Recommendations() {
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
     try {
-      // Show progress message
-      const progressDiv = document.createElement('div');
-      progressDiv.className = 'fixed top-4 right-4 bg-blue-100 text-blue-800 px-4 py-2 rounded shadow-lg';
-      progressDiv.innerHTML = 'Preparing content...';
-      document.body.appendChild(progressDiv);
+      // Create PDF layout
+      const pdfContent = document.createElement('div');
+      pdfContent.style.width = '210mm';
+      pdfContent.style.margin = '0';
+      pdfContent.style.padding = '0';
+      
+      // Render PDF layout
+      ReactDOM.render(
+        <PDFLayout 
+          data={state} 
+          recommendations={{
+            calculateSalaryRanges,
+            getCareerPaths,
+            getRecommendedCertifications
+          }}
+        />, 
+        pdfContent
+      );
+      
+      document.body.appendChild(pdfContent);
 
-      const content = contentRef.current;
-      if (!content) {
-        throw new Error('Content not found');
-      }
-
-      // Add PDF mode class and wait for styles to apply
-      content.classList.add('pdf-mode');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      progressDiv.innerHTML = 'Capturing content...';
-
-      try {
-        // Capture content
-        const canvas = await html2canvas(content, {
-          scale: 1, // Reduced scale for better performance
-          useCORS: true,
-          allowTaint: true,
-          logging: true,
-          backgroundColor: '#ffffff',
-          removeContainer: true,
-          onclone: (clonedDoc) => {
-            const clonedContent = clonedDoc.querySelector('.pdf-mode');
-            if (clonedContent) {
-              clonedContent.style.width = '100%';
-              clonedContent.style.margin = '0';
-              clonedContent.style.padding = '20px';
-              clonedContent.style.backgroundColor = 'white';
-              clonedContent.style.minHeight = '100%';
-              
-              // Ensure all elements are visible
-              clonedContent.querySelectorAll('*').forEach(el => {
-                el.style.display = el.tagName.toLowerCase() === 'li' ? 'list-item' : 'block';
-                el.style.visibility = 'visible';
-                el.style.opacity = '1';
-              });
-            }
-          }
-        });
-
-        progressDiv.innerHTML = 'Generating PDF...';
-
-        // Create PDF
-        const imgData = canvas.toDataURL('image/jpeg', 0.8);
-        const pdf = new jsPDF({
-          unit: 'mm',
-          format: 'a4',
-          orientation: 'portrait'
-        });
-
-        // Calculate dimensions
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-        const imgWidth = pageWidth;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        // Add pages
-        let heightLeft = imgHeight;
-        let position = 0;
-        let page = 1;
-
-        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, '', 'FAST');
-
-        while (heightLeft >= pageHeight) {
-          position = -pageHeight * page;
-          pdf.addPage();
-          pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, '', 'FAST');
-          heightLeft -= pageHeight;
-          page++;
-        }
-
-        // Save PDF
-        progressDiv.innerHTML = 'Saving PDF...';
-        pdf.save('construction-career-recommendations.pdf');
-
-      } catch (captureError) {
-        console.error('Content capture error:', captureError);
-        throw new Error('Failed to capture content');
-      }
+      // Generate PDF
+      const pdf = await html2pdf().from(pdfContent).set({
+        margin: 10,
+        filename: 'career-recommendations.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).save();
 
       // Cleanup
-      content.classList.remove('pdf-mode');
-      document.body.removeChild(progressDiv);
-
+      document.body.removeChild(pdfContent);
     } catch (error) {
       console.error('PDF generation error:', error);
-      alert(`Error generating PDF: ${error.message}. Please try again.`);
+      alert('Error generating PDF. Please try again.');
     } finally {
       setIsGeneratingPDF(false);
     }
