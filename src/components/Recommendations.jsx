@@ -15,9 +15,6 @@ import WorkLifeBalance from './WorkLifeBalance';
 import FinancialPlanning from './FinancialPlanning';
 import SpecializedTraining from './SpecializedTraining';
 import NetworkingEvents from './NetworkingEvents';
-import PDFLayout from './PDFLayout';
-import ReactDOMServer from 'react-dom/server';
-import PrintLayout from './PrintLayout';
 import html2pdf from 'html2pdf.js';
 
 function Recommendations() {
@@ -73,60 +70,19 @@ function Recommendations() {
     window.location.href = '/';
   };
 
-  const handlePrint = async () => {
-    setIsGeneratingPDF(true); // We can reuse this state for print generation
+  const handlePrint = () => {
     try {
-      const content = ReactDOMServer.renderToString(
-        <PrintLayout 
-          data={state} 
-          recommendations={{
-            calculateSalaryRanges,
-            getCareerPaths,
-            getRecommendedCertifications
-          }}
-        />
-      );
-
-      const response = await fetch('/.netlify/functions/generate-print', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Print generation failed');
-      }
-
-      // Get the PDF blob and create a URL
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-
-      // Create an iframe to handle the print
-      const printFrame = document.createElement('iframe');
-      printFrame.style.display = 'none';
-      document.body.appendChild(printFrame);
-
-      printFrame.src = url;
-      printFrame.onload = () => {
-        try {
-          printFrame.contentWindow.print();
-        } catch (error) {
-          console.error('Print error:', error);
-          alert('Error printing. Please try again.');
-        } finally {
-          // Cleanup
-          document.body.removeChild(printFrame);
-          window.URL.revokeObjectURL(url);
-        }
-      };
-
+      // Add print-specific classes before printing
+      document.body.classList.add('print-mode');
+      
+      // Use browser's native print
+      window.print();
     } catch (error) {
-      console.error('Print generation error:', error);
-      alert('Error generating print layout. Please try again.');
+      console.error('Print error:', error);
+      alert('Error printing. Please try again.');
     } finally {
-      setIsGeneratingPDF(false);
+      // Remove print-specific classes after printing
+      document.body.classList.remove('print-mode');
     }
   };
 
