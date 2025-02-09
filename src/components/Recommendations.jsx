@@ -77,69 +77,65 @@ function Recommendations() {
 
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
-    const element = contentRef.current;
-
     try {
-      // Add PDF-specific styles before capturing
-      element.classList.add('pdf-mode');
+      const content = contentRef.current;
+      if (!content) return;
+
+      // Create a new jsPDF instance
+      const pdf = new jsPDF('p', 'mm', 'a4', true);
       
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        logging: false,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        windowWidth: 1200, // Fixed width for consistency
-        onclone: (document) => {
-          // Adjust clone document styles for PDF
-          const clone = document.querySelector('.pdf-mode');
-          if (clone) {
-            clone.style.padding = '20px';
-            clone.style.maxWidth = '1000px';
-            clone.style.margin = '0 auto';
-          }
-        }
-      });
-      
-      // Remove PDF-specific styles after capturing
-      element.classList.remove('pdf-mode');
-      
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-        compress: true
+      // Get all pages worth of content
+      const canvas = await html2canvas(content, {
+        scale: 2, // Higher scale for better quality
+        useCORS: true, // Enable loading external images
+        logging: false, // Disable logging
+        windowWidth: content.scrollWidth,
+        windowHeight: content.scrollHeight
       });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      
-      // Add company name and date to header
-      pdf.setFontSize(10);
-      pdf.setTextColor(128, 128, 128);
-      pdf.text('Embers Staffing Solutions', 10, 10);
-      pdf.text(new Date().toLocaleDateString(), pdfWidth - 30, 10);
-      
-      // Add the main content
-      pdf.addImage(imgData, 'JPEG', 0, 15, pdfWidth, pdfHeight * 0.9);
-      
-      // Add page numbers
-      const pageCount = pdf.internal.getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(8);
-        pdf.setTextColor(128, 128, 128);
-        pdf.text(
-          `Page ${i} of ${pageCount}`,
-          pdfWidth / 2,
-          pdfHeight - 10,
-          { align: 'center' }
+      // Calculate dimensions
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // Add first page
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg', 1.0),
+        'JPEG',
+        0,
+        position,
+        imgWidth,
+        imgHeight,
+        '',
+        'FAST'
+      );
+      heightLeft -= pageHeight;
+
+      // Add subsequent pages if needed
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(
+          canvas.toDataURL('image/jpeg', 1.0),
+          'JPEG',
+          0,
+          position,
+          imgWidth,
+          imgHeight,
+          '',
+          'FAST'
         );
+        heightLeft -= pageHeight;
       }
-      
-      pdf.save('career-recommendations.pdf');
+
+      // Save the PDF
+      pdf.save('construction-career-recommendations.pdf');
     } catch (error) {
-      console.error('PDF generation failed:', error);
+      console.error('Error generating PDF:', error);
+      // Optionally show error to user
+      alert('Error generating PDF. Please try again.');
     } finally {
       setIsGeneratingPDF(false);
     }
@@ -407,7 +403,7 @@ function Recommendations() {
         </div>
 
         {/* Content to be printed/downloaded */}
-        <div ref={contentRef}>
+        <div ref={contentRef} className="bg-white print:p-0">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900">Your Career Recommendations</h2>
             <p className="mt-4 text-lg text-gray-600">

@@ -12,6 +12,8 @@
   /* Reset background colors for printing */
   body {
     background-color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   /* Ensure content is visible */
@@ -66,6 +68,18 @@
   h3 {
     font-size: 14pt !important;
     margin-bottom: 0.5rem !important;
+  }
+
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+  
+  .print\:p-0 {
+    padding: 0 !important;
+  }
+  
+  .print\:p-4 {
+    padding: 1rem !important;
   }
 }
 
