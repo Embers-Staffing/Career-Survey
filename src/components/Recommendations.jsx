@@ -90,76 +90,83 @@ function Recommendations() {
       // Add PDF mode class for better styling
       content.classList.add('pdf-mode');
 
-      // Create a new jsPDF instance with better margins
-      const pdf = new jsPDF({
-        unit: 'mm',
-        format: 'a4',
-        orientation: 'portrait',
-        compress: true,
-        margins: { // Add margins
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20
-        }
-      });
+      // Wait for any animations/transitions to complete
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Update progress
       progressDiv.innerHTML = 'Capturing content...';
-      
+
       // Improved canvas settings
       const canvas = await html2canvas(content, {
         scale: 2,
         useCORS: true,
-        logging: false,
+        logging: true, // Enable logging for debugging
+        allowTaint: true,
+        foreignObjectRendering: true,
+        scrollY: -window.scrollY,
         windowWidth: content.scrollWidth,
         windowHeight: content.scrollHeight,
         onclone: (clonedDoc) => {
-          // Add any specific styling to the cloned document
           const clonedContent = clonedDoc.querySelector('.pdf-mode');
           if (clonedContent) {
+            // Ensure all content is visible
+            clonedContent.style.display = 'block';
+            clonedContent.style.position = 'relative';
+            clonedContent.style.width = '100%';
+            clonedContent.style.height = 'auto';
             clonedContent.style.padding = '20px';
             clonedContent.style.backgroundColor = 'white';
+            
+            // Force all sections to be visible
+            clonedContent.querySelectorAll('section, div').forEach(el => {
+              el.style.display = 'block';
+              el.style.height = 'auto';
+              el.style.overflow = 'visible';
+            });
           }
         }
       });
 
-      // Calculate dimensions with margins
-      const imgWidth = 210 - 40; // A4 width minus margins
-      const pageHeight = 297 - 40; // A4 height minus margins
+      // Create PDF with proper dimensions
+      const imgWidth = 210 - 40; // A4 width minus margins (in mm)
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      let heightLeft = imgHeight;
-      let position = 20; // Start position after top margin
+      const pdf = new jsPDF({
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'portrait'
+      });
 
-      // Add first page
+      // Add content to PDF
       pdf.addImage(
         canvas.toDataURL('image/jpeg', 1.0),
         'JPEG',
         20, // left margin
-        position,
+        20, // top margin
         imgWidth,
         imgHeight,
-        '',
+        undefined,
         'FAST'
       );
-      heightLeft -= pageHeight;
 
-      // Add subsequent pages
+      // Add additional pages if needed
+      const pageHeight = 297 - 40; // A4 height minus margins
+      let heightLeft = imgHeight - pageHeight;
+      let position = -(pageHeight); // Start position for next pages
+
       while (heightLeft >= 0) {
-        position = heightLeft - imgHeight + 20; // Add margin
         pdf.addPage();
         pdf.addImage(
           canvas.toDataURL('image/jpeg', 1.0),
           'JPEG',
-          20, // left margin
+          20,
           position,
           imgWidth,
           imgHeight,
-          '',
+          undefined,
           'FAST'
         );
         heightLeft -= pageHeight;
+        position -= pageHeight;
       }
 
       // Remove PDF mode class
