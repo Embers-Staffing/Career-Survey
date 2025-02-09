@@ -21,6 +21,8 @@ import PDFLayout from './PDFLayout';
 import ReactDOM from 'react-dom';
 import html2pdf from 'html2pdf.js';
 import PrintLayout from './PrintLayout';
+import puppeteer from 'puppeteer';
+import ReactDOMServer from 'react-dom/server';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -75,48 +77,67 @@ function Recommendations() {
     window.location.href = '/';
   };
 
-  const handlePrint = () => {
-    // Create print layout
-    const printContent = document.createElement('div');
-    printContent.style.display = 'none';
-    
-    // Render print layout
-    ReactDOM.render(
-      <PrintLayout 
-        data={state} 
-        recommendations={{
-          calculateSalaryRanges,
-          getCareerPaths,
-          getRecommendedCertifications
-        }}
-      />, 
-      printContent
-    );
-    
-    // Add to document
-    document.body.appendChild(printContent);
-    
-    // Show print layout and trigger print
-    printContent.style.display = 'block';
-    window.print();
-    
-    // Cleanup after printing
-    document.body.removeChild(printContent);
+  const handlePrint = async () => {
+    setIsGeneratingPDF(true); // We can reuse this state for print generation
+    try {
+      const content = ReactDOMServer.renderToString(
+        <PrintLayout 
+          data={state} 
+          recommendations={{
+            calculateSalaryRanges,
+            getCareerPaths,
+            getRecommendedCertifications
+          }}
+        />
+      );
+
+      const response = await fetch('/api/generate-print', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Print generation failed');
+      }
+
+      // Get the PDF blob and create a URL
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      // Create an iframe to handle the print
+      const printFrame = document.createElement('iframe');
+      printFrame.style.display = 'none';
+      document.body.appendChild(printFrame);
+
+      printFrame.src = url;
+      printFrame.onload = () => {
+        try {
+          printFrame.contentWindow.print();
+        } catch (error) {
+          console.error('Print error:', error);
+          alert('Error printing. Please try again.');
+        } finally {
+          // Cleanup
+          document.body.removeChild(printFrame);
+          window.URL.revokeObjectURL(url);
+        }
+      };
+
+    } catch (error) {
+      console.error('Print generation error:', error);
+      alert('Error generating print layout. Please try again.');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
   };
 
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
     try {
-      // Create PDF layout
-      const pdfContent = document.createElement('div');
-      pdfContent.style.width = '210mm';
-      pdfContent.style.height = 'auto';
-      pdfContent.style.margin = '0';
-      pdfContent.style.padding = '0';
-      document.body.appendChild(pdfContent);
-      
-      // Render PDF layout
-      ReactDOM.render(
+      const content = ReactDOMServer.renderToString(
         <PDFLayout 
           data={state} 
           recommendations={{
@@ -124,50 +145,29 @@ function Recommendations() {
             getCareerPaths,
             getRecommendedCertifications
           }}
-        />, 
-        pdfContent
+        />
       );
 
-      // Wait for images to load
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Generate PDF with better settings
-      const opt = {
-        margin: [10, 10, 10, 10],
-        filename: 'career-recommendations.pdf',
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { 
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          logging: true,
-          letterRendering: true,
-          imageTimeout: 0,
-          onclone: function(clonedDoc) {
-            // Ensure images are loaded in cloned document
-            clonedDoc.querySelectorAll('img').forEach(img => {
-              img.src = img.src;
-            });
-          }
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        jsPDF: { 
-          unit: 'mm', 
-          format: 'a4', 
-          orientation: 'portrait',
-          compress: true
-        },
-        pagebreak: { 
-          mode: ['avoid-all', 'css', 'legacy'],
-          before: '.page-break-before',
-          after: '.page-break-after',
-          avoid: ['img', '.recommendation-card', '.timeline-section', 'h2', 'h3']
-        }
-      };
+        body: JSON.stringify({ content }),
+      });
 
-      await html2pdf().set(opt).from(pdfContent).save();
+      if (!response.ok) {
+        throw new Error('PDF generation failed');
+      }
 
-      // Cleanup
-      document.body.removeChild(pdfContent);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'career-recommendations.pdf';
+      link.click();
+      window.URL.revokeObjectURL(url);
+
     } catch (error) {
       console.error('PDF generation error:', error);
       alert('Error generating PDF. Please try again.');
