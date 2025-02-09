@@ -110,8 +110,10 @@ function Recommendations() {
       // Create PDF layout
       const pdfContent = document.createElement('div');
       pdfContent.style.width = '210mm';
+      pdfContent.style.height = 'auto';
       pdfContent.style.margin = '0';
       pdfContent.style.padding = '0';
+      document.body.appendChild(pdfContent);
       
       // Render PDF layout
       ReactDOM.render(
@@ -125,37 +127,44 @@ function Recommendations() {
         />, 
         pdfContent
       );
-      
-      document.body.appendChild(pdfContent);
 
-      // Wait for content to be fully rendered
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Wait for images to load
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Generate PDF with better page handling
-      await html2pdf().set({
-        margin: 10,
+      // Generate PDF with better settings
+      const opt = {
+        margin: [10, 10, 10, 10],
         filename: 'career-recommendations.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
+        image: { type: 'jpeg', quality: 1 },
         html2canvas: { 
           scale: 2,
           useCORS: true,
+          allowTaint: true,
+          logging: true,
           letterRendering: true,
-          scrollY: 0
+          imageTimeout: 0,
+          onclone: function(clonedDoc) {
+            // Ensure images are loaded in cloned document
+            clonedDoc.querySelectorAll('img').forEach(img => {
+              img.src = img.src;
+            });
+          }
         },
         jsPDF: { 
           unit: 'mm', 
           format: 'a4', 
           orientation: 'portrait',
-          compress: true,
-          hotfixes: ['px_scaling']
+          compress: true
         },
         pagebreak: { 
           mode: ['avoid-all', 'css', 'legacy'],
           before: '.page-break-before',
           after: '.page-break-after',
-          avoid: ['tr', 'td', '.recommendation-card', '.timeline-section']
+          avoid: ['img', '.recommendation-card', '.timeline-section', 'h2', 'h3']
         }
-      }).from(pdfContent).save();
+      };
+
+      await html2pdf().set(opt).from(pdfContent).save();
 
       // Cleanup
       document.body.removeChild(pdfContent);

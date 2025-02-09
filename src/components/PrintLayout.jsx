@@ -6,11 +6,12 @@ function PrintLayout({ data, recommendations }) {
       {/* Header */}
       <header className="print-header">
         <img 
-          src={process.env.PUBLIC_URL + '/embers-logo.png'}
+          src={window.location.origin + '/embers-logo.png'}
           alt="Embers Staffing" 
           className="print-logo"
           style={{
             width: '200px',
+            height: 'auto',
             marginBottom: '20px',
             display: 'block',
             marginLeft: 'auto',
