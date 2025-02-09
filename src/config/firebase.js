@@ -101,7 +101,19 @@ const testFirestoreAccess = async (user) => {
         console.log('Document data:', {
           userId: data.userId,
           submittedAt: data.submittedAt,
-          // Log other non-sensitive fields
+          personalInfo: {
+            yearsInConstruction: data.personalInfo?.yearsInConstruction,
+          },
+          skills: {
+            technical: data.skills?.technical?.length || 0,
+            certifications: data.skills?.certifications?.length || 0
+          },
+          workPreferences: {
+            hasPreferences: !!data.workPreferences
+          },
+          goals: {
+            hasGoals: !!data.goals
+          }
         });
       }
     });

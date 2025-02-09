@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import EducationResources from './EducationResources';
 import JobBoards from './JobBoards';
 import ProfessionalAssociations from './ProfessionalAssociations';
+import TechnologyTraining from './TechnologyTraining';
+import MentorshipPrograms from './MentorshipPrograms';
+import CareerTools from './CareerTools';
 
 function Recommendations() {
   const { state, dispatch } = useSurvey();
@@ -497,7 +500,12 @@ function Recommendations() {
             </div>
           </div>
 
-          {/* Add Professional Associations before Job Boards */}
+          {/* Add Technology Training before Professional Associations */}
+          <TechnologyTraining />
+          <MentorshipPrograms />
+          <CareerTools />
+
+          {/* Professional Associations */}
           <ProfessionalAssociations />
 
           {/* Job Boards */}

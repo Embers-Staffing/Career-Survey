@@ -20,7 +20,7 @@ function SubmitResponse({ onReset }) {
       goals
     } = state;
 
-    return {
+    const submissionData = {
       userId: auth.currentUser.uid,
       userEmail: auth.currentUser.email,
       submittedAt: new Date().toISOString(),
@@ -30,6 +30,9 @@ function SubmitResponse({ onReset }) {
       workPreferences,
       goals
     };
+
+    console.log('Preparing to submit survey data:', submissionData);
+    return submissionData;
   };
 
   const handleSubmit = async () => {
@@ -37,9 +40,11 @@ function SubmitResponse({ onReset }) {
     setError('');
 
     try {
-      // Store only the survey responses, not the recommendations
+      console.log('Starting survey submission...');
       const submissionData = getSubmissionData();
-      await addDoc(collection(db, 'responses'), submissionData);
+      
+      const docRef = await addDoc(collection(db, 'responses'), submissionData);
+      console.log('Survey submitted successfully! Document ID:', docRef.id);
       
       // Show recommendations after successful submission
       setShowRecommendations(true);

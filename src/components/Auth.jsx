@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
 function Auth({ children }) {
@@ -98,6 +98,14 @@ function Auth({ children }) {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -107,7 +115,19 @@ function Auth({ children }) {
   }
 
   if (user) {
-    return children;
+    return (
+      <div>
+        <div className="fixed top-4 right-4">
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-sm"
+          >
+            Logout
+          </button>
+        </div>
+        {children}
+      </div>
+    );
   }
 
   return (

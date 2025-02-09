@@ -1,3 +1,143 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Add print styles */
+@media print {
+  /* Hide non-essential elements */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Reset background colors for printing */
+  body {
+    background-color: white !important;
+  }
+
+  /* Ensure content is visible */
+  .bg-gray-100,
+  .bg-white {
+    background-color: white !important;
+    box-shadow: none !important;
+  }
+
+  /* Adjust text colors for better printing */
+  .text-gray-600 {
+    color: #374151 !important;
+  }
+
+  /* Remove unnecessary padding/margins */
+  .py-12 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  /* Ensure page breaks don't cut through sections */
+  .mt-8,
+  .mt-12 {
+    page-break-before: auto;
+    margin-top: 2rem !important;
+  }
+
+  /* Add title to printed page */
+  .recommendations-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  /* Format sections for print */
+  .rounded-lg {
+    border: 1px solid #e5e7eb !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Ensure text is readable */
+  * {
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+  }
+
+  h2 {
+    font-size: 18pt !important;
+    margin-bottom: 1rem !important;
+  }
+
+  h3 {
+    font-size: 14pt !important;
+    margin-bottom: 0.5rem !important;
+  }
+}
+
+/* PDF-specific styles */
+.pdf-mode {
+  /* Reset background colors */
+  background-color: white !important;
+  
+  /* Adjust spacing */
+  padding: 20px !important;
+  margin: 0 !important;
+  
+  /* Ensure proper text rendering */
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+.pdf-mode h2 {
+  font-size: 24px !important;
+  color: #1a365d !important;
+  margin-bottom: 1rem !important;
+}
+
+.pdf-mode h3 {
+  font-size: 20px !important;
+  color: #2d3748 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.pdf-mode .rounded-lg {
+  border: 1px solid #e2e8f0 !important;
+  margin-bottom: 1rem !important;
+  page-break-inside: avoid !important;
+}
+
+.pdf-mode .text-gray-600 {
+  color: #4a5568 !important;
+}
+
+.pdf-mode .text-green-600 {
+  color: #047857 !important;
+}
+
+.pdf-mode ul {
+  margin-left: 1rem !important;
+}
+
+.pdf-mode li {
+  margin-bottom: 0.5rem !important;
+}
+
+.pdf-mode .grid {
+  display: block !important;
+}
+
+.pdf-mode .grid > div {
+  margin-bottom: 1rem !important;
+  page-break-inside: avoid !important;
+}
+
+/* Hide elements in PDF */
+.pdf-mode .print\:hidden,
+.pdf-mode .hover\:bg-blue-600,
+.pdf-mode .hover\:text-blue-800 {
+  display: none !important;
+}
+
+/* Ensure footer stays at bottom */
+.pdf-mode footer {
+  margin-top: 2rem !important;
+  padding-top: 1rem !important;
+  border-top: 1px solid #e2e8f0 !important;
+  page-break-before: auto !important;
+}
