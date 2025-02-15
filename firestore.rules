@@ -1,26 +1,8 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper function to check if user is authenticated
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-
-    // Helper function to check if user owns the document
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    match /responses/{responseId} {
-      allow read: if true;
-      allow create: if true;
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    // Add a test document that everyone can read
-    match /test/{document=**} {
-      allow read: if true;
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 } 
