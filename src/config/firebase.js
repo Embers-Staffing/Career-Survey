@@ -10,10 +10,19 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase with explicit options
+const app = initializeApp(firebaseConfig, {
+  experimentalForceLongPolling: true,
+  useFetchStreams: false
+});
 
-// Initialize Firestore
+// Initialize Firestore with settings
 const db = getFirestore(app);
+
+// Log initialization
+console.log('Firebase initialized with config:', {
+  projectId: firebaseConfig.projectId,
+  authDomain: firebaseConfig.authDomain
+});
 
 export { db }; 
