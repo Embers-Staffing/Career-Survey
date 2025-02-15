@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -10,21 +10,23 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Initialize Firebase with explicit options
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore with settings
+// Initialize Firestore with explicit database URL
 const db = getFirestore(app, {
   experimentalForceLongPolling: true,
-  merge: true,
-  ignoreUndefinedProperties: true
+  useFetchStreams: false,
+  host: 'firestore.googleapis.com',
+  ssl: true,
+  databaseURL: `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)`,
 });
 
 // Log initialization details
 console.log('Firebase initialized with config:', {
   projectId: firebaseConfig.projectId,
   authDomain: firebaseConfig.authDomain,
-  databaseInstance: db ? 'Successfully created' : 'Failed to create'
+  databaseURL: `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)`
 });
 
 // Verify database connection
