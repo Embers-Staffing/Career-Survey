@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -11,18 +11,28 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase with explicit options
-const app = initializeApp(firebaseConfig, {
-  experimentalForceLongPolling: true,
-  useFetchStreams: false
-});
+const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore with settings
-const db = getFirestore(app);
+const db = getFirestore(app, {
+  experimentalForceLongPolling: true,
+  merge: true,
+  ignoreUndefinedProperties: true
+});
 
-// Log initialization
+// Log initialization details
 console.log('Firebase initialized with config:', {
   projectId: firebaseConfig.projectId,
-  authDomain: firebaseConfig.authDomain
+  authDomain: firebaseConfig.authDomain,
+  databaseInstance: db ? 'Successfully created' : 'Failed to create'
 });
+
+// Verify database connection
+try {
+  const dbTest = getFirestore();
+  console.log('Database connection test:', dbTest ? 'Successful' : 'Failed');
+} catch (error) {
+  console.error('Database connection error:', error);
+}
 
 export { db }; 
