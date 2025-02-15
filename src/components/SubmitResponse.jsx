@@ -10,42 +10,29 @@ function SubmitResponse({ onReset }) {
   const [error, setError] = useState('');
   const [showRecommendations, setShowRecommendations] = useState(false);
 
-  // Only store essential survey data, not recommendations
-  const getSubmissionData = () => {
-    const {
-      personalInfo,
-      personalityTraits,
-      skills,
-      workPreferences,
-      goals
-    } = state;
-
-    return {
-      submittedAt: new Date().toISOString(),
-      personalInfo,
-      personalityTraits,
-      skills,
-      workPreferences,
-      goals
-    };
-  };
-
   const handleSubmit = async () => {
     setSubmitting(true);
     setError('');
 
     try {
-      console.log('Starting survey submission...');
-      const submissionData = getSubmissionData();
+      const submissionData = {
+        submittedAt: new Date().toISOString(),
+        personalInfo: state.personalInfo || {},
+        personalityTraits: state.personalityTraits || {},
+        skills: state.skills || {},
+        workPreferences: state.workPreferences || {},
+        goals: state.goals || {}
+      };
+
+      console.log('Attempting to submit data:', submissionData);
       
       const docRef = await addDoc(collection(db, 'responses'), submissionData);
-      console.log('Survey submitted successfully! Document ID:', docRef.id);
+      console.log('Document written with ID:', docRef.id);
       
-      // Show recommendations after successful submission
       setShowRecommendations(true);
     } catch (error) {
-      console.error('Submission error:', error);
-      setError('Failed to submit response. Please try again.');
+      console.error('Detailed submission error:', error);
+      setError(`Submission failed: ${error.message}`);
     } finally {
       setSubmitting(false);
     }
