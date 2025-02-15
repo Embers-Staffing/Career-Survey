@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSurvey } from '../context/SurveyContext';
-import { db, auth } from '../config/firebase';
+import { db } from '../config/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import Recommendations from './Recommendations';
 
@@ -20,9 +20,7 @@ function SubmitResponse({ onReset }) {
       goals
     } = state;
 
-    const submissionData = {
-      userId: auth.currentUser.uid,
-      userEmail: auth.currentUser.email,
+    return {
       submittedAt: new Date().toISOString(),
       personalInfo,
       personalityTraits,
@@ -30,9 +28,6 @@ function SubmitResponse({ onReset }) {
       workPreferences,
       goals
     };
-
-    console.log('Preparing to submit survey data:', submissionData);
-    return submissionData;
   };
 
   const handleSubmit = async () => {
