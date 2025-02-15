@@ -15,6 +15,13 @@ function SubmitResponse({ onReset }) {
     setError('');
 
     try {
+      // Log Firebase connection info
+      console.log('Firebase database:', db);
+      console.log('Firebase config:', {
+        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN
+      });
+
       const submissionData = {
         submittedAt: new Date().toISOString(),
         personalInfo: state.personalInfo || {},
@@ -24,14 +31,23 @@ function SubmitResponse({ onReset }) {
         goals: state.goals || {}
       };
 
-      console.log('Attempting to submit data:', submissionData);
+      console.log('Attempting to submit data:', JSON.stringify(submissionData, null, 2));
       
-      const docRef = await addDoc(collection(db, 'responses'), submissionData);
+      // Try to get the collection reference first
+      const responsesRef = collection(db, 'responses');
+      console.log('Collection reference:', responsesRef);
+
+      const docRef = await addDoc(responsesRef, submissionData);
       console.log('Document written with ID:', docRef.id);
       
       setShowRecommendations(true);
     } catch (error) {
-      console.error('Detailed submission error:', error);
+      console.error('Detailed submission error:', {
+        message: error.message,
+        code: error.code,
+        name: error.name,
+        stack: error.stack
+      });
       setError(`Submission failed: ${error.message}`);
     } finally {
       setSubmitting(false);
