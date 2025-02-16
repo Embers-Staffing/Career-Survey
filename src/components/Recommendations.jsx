@@ -619,14 +619,14 @@ function Recommendations() {
           <div className="border-t pt-8">
             <p className="mb-2">© Embers Staffing 2025</p>
             <p className="text-sm">
-              Made with ❤️ by{' '}
+              Built by{' '}
               <a 
-                href="https://github.com/ArsCodeAmatoria" 
+                href="https://bigfootcrane.com/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-800"
               >
-                ArsCodeAmatoria
+                Bigfoot Crane
               </a>
             </p>
           </div>
