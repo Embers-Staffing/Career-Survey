@@ -7,8 +7,7 @@ const firebaseConfig = {
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  databaseURL: `https://firestore.googleapis.com/v1/projects/${import.meta.env.VITE_FIREBASE_PROJECT_ID}/databases/(default)`
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
@@ -17,11 +16,10 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firestore
 const db = getFirestore(app);
 
-// Log initialization details
+// Log initialization for debugging
 console.log('Firebase initialized with config:', {
   projectId: firebaseConfig.projectId,
-  authDomain: firebaseConfig.authDomain,
-  databaseURL: firebaseConfig.databaseURL
+  authDomain: firebaseConfig.authDomain
 });
 
 // Verify database connection
