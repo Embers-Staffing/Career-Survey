@@ -76,19 +76,27 @@ function Recommendations() {
 
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
+    const element = contentRef.current;
+    const opt = {
+      margin: [0.5, 0.5, 0.5, 0.5],
+      filename: 'career-recommendations.pdf',
+      image: { type: 'jpeg', quality: 1 },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        logging: true
+      },
+      jsPDF: { 
+        unit: 'in', 
+        format: 'letter', 
+        orientation: 'portrait'
+      }
+    };
+
     try {
-      const element = contentRef.current;
-      const opt = {
-        margin: 1,
-        filename: 'career-recommendations.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
       await html2pdf().set(opt).from(element).save();
     } catch (error) {
       console.error('PDF generation error:', error);
-      alert('Error generating PDF. Please try again.');
     } finally {
       setIsGeneratingPDF(false);
     }
