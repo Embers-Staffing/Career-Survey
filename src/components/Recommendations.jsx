@@ -71,19 +71,7 @@ function Recommendations() {
   };
 
   const handlePrint = () => {
-    try {
-      // Add print-specific classes before printing
-      document.body.classList.add('print-mode');
-      
-      // Use browser's native print
-      window.print();
-    } catch (error) {
-      console.error('Print error:', error);
-      alert('Error printing. Please try again.');
-    } finally {
-      // Remove print-specific classes after printing
-      document.body.classList.remove('print-mode');
-    }
+    window.print();
   };
 
   const handleDownloadPDF = async () => {
